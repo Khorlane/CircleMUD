@@ -53,7 +53,7 @@
 #define HAVE_INET_ADDR 1
 
 /* Define if you have the inet_aton function.  */
-#define HAVE_INET_ATON 1
+/* #define HAVE_INET_ATON 1 */
 
 /* Define if you have the select function.  */
 #define HAVE_SELECT 1
@@ -65,7 +65,7 @@
 #define HAVE_STRCASECMP 1
 
 /* Define if you have the strdup function.  */
-#define HAVE_STRDUP 1
+/* #define HAVE_STRDUP 1 */
 
 /* Define if you have the strerror function.  */
 #define HAVE_STRERROR 1

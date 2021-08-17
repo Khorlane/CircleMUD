@@ -12,6 +12,7 @@
 
 #include "conf.h"
 #include "sysdep.h"
+#include <ctype.h>
 
 #if CIRCLE_GNU_LIBC_MEMORY_TRACK
 # include <mcheck.h>
@@ -205,8 +206,8 @@ void gettimeofday(struct timeval *t, struct timezone *dummy)
 
 int main(int argc, char **argv)
 {
-  ush_int port;
-  int pos = 1;
+  ush_int     port;
+  int         pos = 1;
   const char *dir;
 
 #if CIRCLE_GNU_LIBC_MEMORY_TRACK
@@ -230,22 +231,22 @@ int main(int argc, char **argv)
     switch (*(argv[pos] + 1)) {
     case 'o':
       if (*(argv[pos] + 2))
-	LOGNAME = argv[pos] + 2;
+  LOGNAME = argv[pos] + 2;
       else if (++pos < argc)
-	LOGNAME = argv[pos];
+  LOGNAME = argv[pos];
       else {
-	puts("SYSERR: File name to log to expected after option -o.");
-	exit(1);
+  puts("SYSERR: File name to log to expected after option -o.");
+  exit(1);
       }
       break;
     case 'd':
       if (*(argv[pos] + 2))
-	dir = argv[pos] + 2;
+  dir = argv[pos] + 2;
       else if (++pos < argc)
-	dir = argv[pos];
+  dir = argv[pos];
       else {
-	puts("SYSERR: Directory arg expected after option -d.");
-	exit(1);
+  puts("SYSERR: Directory arg expected after option -d.");
+  exit(1);
       }
       break;
     case 'm':
@@ -276,11 +277,11 @@ int main(int argc, char **argv)
               "  -d <directory> Specify library directory (defaults to 'lib').\n"
               "  -h             Print this command line argument help.\n"
               "  -m             Start in mini-MUD mode.\n"
-	      "  -o <file>      Write log to <file> instead of stderr.\n"
+              "  -o <file>      Write log to <file> instead of stderr.\n"
               "  -q             Quick boot (doesn't scan rent for object limits)\n"
               "  -r             Restrict MUD -- no new players allowed.\n"
               "  -s             Suppress special procedure assignments.\n",
-		 argv[0]
+              argv[0] 
       );
       exit(0);
     default:
@@ -327,15 +328,15 @@ int main(int argc, char **argv)
 
   if (!scheck) {
     log("Clearing other memory.");
-    free_player_index();	/* db.c */
-    free_messages();		/* fight.c */
-    clear_free_list();		/* mail.c */
-    free_text_files();		/* db.c */
-    Board_clear_all();		/* boards.c */
-    free(cmd_sort_info);	/* act.informative.c */
-    free_social_messages();	/* act.social.c */
-    free_help();		/* db.c */
-    Free_Invalid_List();	/* ban.c */
+    free_player_index();    /* db.c */
+    free_messages();        /* fight.c */
+    clear_free_list();      /* mail.c */
+    free_text_files();      /* db.c */
+    Board_clear_all();      /* boards.c */
+    free(cmd_sort_info);    /* act.informative.c */
+    free_social_messages(); /* act.social.c */
+    free_help();            /* db.c */
+    Free_Invalid_List();    /* ban.c */
   }
 
   log("Done.");
@@ -1696,6 +1697,7 @@ ssize_t perform_socket_read(socket_t desc, char *read_point, size_t space_left)
  * character. (Do you really need 256 characters on a line?)
  * -gg 1/21/2000
  */
+
 int process_input(struct descriptor_data *t)
 {
   int buf_length, failed_subst;
@@ -1774,7 +1776,7 @@ int process_input(struct descriptor_data *t)
 	  } else
 	    space_left++;
 	}
-      } else if (isascii(*ptr) && isprint(*ptr)) {
+      } else if (__isascii(*ptr) && isprint(*ptr)) {
 	if ((*(write_point++) = *ptr) == '$') {		/* copy one character */
 	  *(write_point++) = '$';	/* if it's a $, double it */
 	  space_left -= 2;
@@ -2074,6 +2076,7 @@ RETSIGTYPE unrestrict_game(int sig)
 
 #ifdef CIRCLE_UNIX
 
+#define my_signal(signo, func) signal(signo, func)
 /* clean up our zombie kids to avoid defunct processes */
 RETSIGTYPE reap(int sig)
 {
@@ -2117,7 +2120,7 @@ RETSIGTYPE hupsig(int sig)
  * SunOS Release 4.0.2 (sun386) needs this too, according to Tim Aldric.
  */
 
-#ifndef POSIX
+#ifdef POSIX
 #define my_signal(signo, func) signal(signo, func)
 #else
 sigfunc *my_signal(int signo, sigfunc *func)

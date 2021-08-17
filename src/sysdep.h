@@ -25,7 +25,7 @@
  * See running.doc for details.
  */
 
-/* #define NOCRYPT */
+#define NOCRYPT
 
 /**************************************************************************/
 
@@ -132,6 +132,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <linux/limits.h> // slb fix PATH_MAX and buf1 'undeclared identifier' compile errors
 
 #ifdef HAVE_STRING_H
 #include <string.h>

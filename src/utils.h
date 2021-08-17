@@ -48,6 +48,9 @@ int	str_cmp(const char *arg1, const char *arg2);
 #ifndef strn_cmp
 int	strn_cmp(const char *arg1, const char *arg2, int n);
 #endif
+#if !defined(HAVE_STRDUP)
+char *strdup(const char* source);
+#endif
 
 /* random functions in random.c */
 void circle_srandom(unsigned long initial_seed);
