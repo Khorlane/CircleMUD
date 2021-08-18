@@ -12,7 +12,6 @@
 
 #include "conf.h"
 #include "sysdep.h"
-#include <ctype.h>
 
 #if CIRCLE_GNU_LIBC_MEMORY_TRACK
 # include <mcheck.h>
