@@ -224,28 +224,28 @@ int main(int argc, char **argv)
 #endif
 
   port = DFLT_PORT;
-  dir = DFLT_DIR;
+  dir  = DFLT_DIR;
 
   while ((pos < argc) && (*(argv[pos]) == '-')) {
     switch (*(argv[pos] + 1)) {
     case 'o':
       if (*(argv[pos] + 2))
-  LOGNAME = argv[pos] + 2;
+        LOGNAME = argv[pos] + 2;
       else if (++pos < argc)
-  LOGNAME = argv[pos];
+        LOGNAME = argv[pos];
       else {
-  puts("SYSERR: File name to log to expected after option -o.");
-  exit(1);
+        puts("SYSERR: File name to log to expected after option -o.");
+        exit(1);
       }
       break;
     case 'd':
       if (*(argv[pos] + 2))
-  dir = argv[pos] + 2;
+        dir = argv[pos] + 2;
       else if (++pos < argc)
-  dir = argv[pos];
+        dir = argv[pos];
       else {
-  puts("SYSERR: Directory arg expected after option -d.");
-  exit(1);
+        puts("SYSERR: Directory arg expected after option -d.");
+        exit(1);
       }
       break;
     case 'm':
