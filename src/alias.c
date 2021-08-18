@@ -39,8 +39,8 @@ void write_aliases(struct char_data *ch)
   }
 
   for (temp = GET_ALIASES(ch); temp; temp = temp->next) {
-    int aliaslen = strlen(temp->alias);
-    int repllen = strlen(temp->replacement) - 1;
+    int aliaslen = (int)strlen(temp->alias);
+    int repllen = (int)strlen(temp->replacement) - 1;
 
     fprintf(file, "%d\n%s\n"	/* Alias */
 		  "%d\n%s\n"	/* Replacement */

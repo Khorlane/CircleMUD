@@ -224,7 +224,7 @@ struct char_data *find_npc_by_name(struct char_data *chAtChar,
   struct char_data *ch;
 
   for (ch = world[IN_ROOM(chAtChar)].people; ch; ch = ch->next_in_room)
-    if (IS_NPC(ch) && !strncmp(pszName, ch->player.short_descr, iLen))
+    if (IS_NPC(ch) && !strncmp(pszName, ch->player.short_descr, (unsigned long)iLen))
       return (ch);
 
   return (NULL);
@@ -670,7 +670,7 @@ int castle_twin_proc(struct char_data *ch, int cmd, char *arg, int ctlnum, const
     return (FALSE);
 
   if (cmd)
-    return block_way(ch, cmd, arg, castle_virtual(ctlnum), 1);
+    return block_way(ch, cmd, arg, castle_virtual((mob_vnum)ctlnum), 1);
 
   if ((king = find_npc_by_name(ch, "King Welmar", 11)) != NULL) {
     char actbuf[MAX_INPUT_LENGTH];
@@ -681,7 +681,7 @@ int castle_twin_proc(struct char_data *ch, int cmd, char *arg, int ctlnum, const
       do_npc_rescue(ch, king);
   }
 
-  if ((twin = find_npc_by_name(ch, twinname, strlen(twinname))) != NULL)
+  if ((twin = find_npc_by_name(ch, twinname, (int)strlen(twinname))) != NULL)
     if (FIGHTING(twin) && 2 * GET_HIT(twin) < GET_HIT(ch))
       do_npc_rescue(ch, twin);
 

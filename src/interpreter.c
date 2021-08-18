@@ -598,8 +598,8 @@ void command_interpreter(struct char_data *ch, char *argument)
     line = any_one_arg(argument, arg);
 
   /* otherwise, find the command */
-  for (length = strlen(arg), cmd = 0; *cmd_info[cmd].command != '\n'; cmd++)
-    if (!strncmp(cmd_info[cmd].command, arg, length))
+  for (length = (int)strlen(arg), cmd = 0; *cmd_info[cmd].command != '\n'; cmd++)
+    if (!strncmp(cmd_info[cmd].command, arg, (unsigned long)length))
       if (GET_LEVEL(ch) >= cmd_info[cmd].minimum_level)
 	break;
 
@@ -863,7 +863,7 @@ int search_block(char *arg, const char **list, int exact)
       l = 1;			/* Avoid "" to match the first available
 				 * string */
     for (i = 0; **(list + i) != '\n'; i++)
-      if (!strncmp(arg, *(list + i), l))
+      if (!strncmp(arg, *(list + i), (unsigned long)l))
 	return (i);
   }
 
@@ -1153,7 +1153,7 @@ int perform_dupe_check(struct descriptor_data *d)
   struct char_data *target = NULL, *ch, *next_ch;
   int mode = 0;
 
-  int id = GET_IDNUM(d->character);
+  int id = (int)GET_IDNUM(d->character);
 
   /*
    * Now that this descriptor has successfully logged in, disconnect all
@@ -1518,7 +1518,7 @@ void nanny(struct descriptor_data *d, char *arg)
       write_to_output(d, "\r\nThat's not a class.\r\nClass: ");
       return;
     } else
-      GET_CLASS(d->character) = load_result;
+      GET_CLASS(d->character) = (byte)load_result;
 
     if (GET_PFILEPOS(d->character) < 0)
       GET_PFILEPOS(d->character) = create_entry(GET_PC_NAME(d->character));

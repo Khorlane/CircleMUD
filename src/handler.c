@@ -215,12 +215,12 @@ void affect_total(struct char_data *ch)
       for (j = 0; j < MAX_OBJ_AFFECT; j++)
 	affect_modify(ch, GET_EQ(ch, i)->affected[j].location,
 		      GET_EQ(ch, i)->affected[j].modifier,
-		      GET_OBJ_AFFECT(GET_EQ(ch, i)), FALSE);
+    (bitvector_t)GET_OBJ_AFFECT(GET_EQ(ch, i)), FALSE);
   }
 
 
   for (af = ch->affected; af; af = af->next)
-    affect_modify(ch, af->location, af->modifier, af->bitvector, FALSE);
+    affect_modify(ch, af->location, af->modifier, (bitvector_t)af->bitvector, FALSE);
 
   ch->aff_abils = ch->real_abils;
 
@@ -229,30 +229,30 @@ void affect_total(struct char_data *ch)
       for (j = 0; j < MAX_OBJ_AFFECT; j++)
 	affect_modify(ch, GET_EQ(ch, i)->affected[j].location,
 		      GET_EQ(ch, i)->affected[j].modifier,
-		      GET_OBJ_AFFECT(GET_EQ(ch, i)), TRUE);
+    (bitvector_t)GET_OBJ_AFFECT(GET_EQ(ch, i)), TRUE);
   }
 
 
   for (af = ch->affected; af; af = af->next)
-    affect_modify(ch, af->location, af->modifier, af->bitvector, TRUE);
+    affect_modify(ch, af->location, af->modifier, (bitvector_t)af->bitvector, TRUE);
 
   /* Make certain values are between 0..25, not < 0 and not > 25! */
 
   i = (IS_NPC(ch) || GET_LEVEL(ch) >= LVL_GRGOD) ? 25 : 18;
 
-  GET_DEX(ch) = MAX(0, MIN(GET_DEX(ch), i));
-  GET_INT(ch) = MAX(0, MIN(GET_INT(ch), i));
-  GET_WIS(ch) = MAX(0, MIN(GET_WIS(ch), i));
-  GET_CON(ch) = MAX(0, MIN(GET_CON(ch), i));
-  GET_CHA(ch) = MAX(0, MIN(GET_CHA(ch), i));
-  GET_STR(ch) = MAX(0, GET_STR(ch));
+  GET_DEX(ch) = (sbyte)MAX(0, MIN(GET_DEX(ch), i));
+  GET_INT(ch) = (sbyte)MAX(0, MIN(GET_INT(ch), i));
+  GET_WIS(ch) = (sbyte)MAX(0, MIN(GET_WIS(ch), i));
+  GET_CON(ch) = (sbyte)MAX(0, MIN(GET_CON(ch), i));
+  GET_CHA(ch) = (sbyte)MAX(0, MIN(GET_CHA(ch), i));
+  GET_STR(ch) = (sbyte)MAX(0, GET_STR(ch));
 
   if (IS_NPC(ch)) {
-    GET_STR(ch) = MIN(GET_STR(ch), i);
+    GET_STR(ch) = (sbyte)MIN(GET_STR(ch), i);
   } else {
     if (GET_STR(ch) > 18) {
       i = GET_ADD(ch) + ((GET_STR(ch) - 18) * 10);
-      GET_ADD(ch) = MIN(i, 100);
+      GET_ADD(ch) = (sbyte)MIN(i, 100);
       GET_STR(ch) = 18;
     }
   }
@@ -272,7 +272,7 @@ void affect_to_char(struct char_data *ch, struct affected_type *af)
   affected_alloc->next = ch->affected;
   ch->affected = affected_alloc;
 
-  affect_modify(ch, af->location, af->modifier, af->bitvector, TRUE);
+  affect_modify(ch, af->location, af->modifier, (bitvector_t)af->bitvector, TRUE);
   affect_total(ch);
 }
 
@@ -292,7 +292,7 @@ void affect_remove(struct char_data *ch, struct affected_type *af)
     return;
   }
 
-  affect_modify(ch, af->location, af->modifier, af->bitvector, FALSE);
+  affect_modify(ch, af->location, af->modifier, (bitvector_t)af->bitvector, FALSE);
   REMOVE_FROM_LIST(af, ch->affected, next);
   free(af);
   affect_total(ch);
@@ -527,7 +527,7 @@ void equip_char(struct char_data *ch, struct obj_data *obj, int pos)
 
   GET_EQ(ch, pos) = obj;
   obj->worn_by = ch;
-  obj->worn_on = pos;
+  obj->worn_on = (sh_int)pos;
 
   if (GET_OBJ_TYPE(obj) == ITEM_ARMOR)
     GET_AC(ch) -= apply_ac(ch, pos);
@@ -542,7 +542,7 @@ void equip_char(struct char_data *ch, struct obj_data *obj, int pos)
   for (j = 0; j < MAX_OBJ_AFFECT; j++)
     affect_modify(ch, obj->affected[j].location,
 		  obj->affected[j].modifier,
-		  GET_OBJ_AFFECT(obj), TRUE);
+      (bitvector_t)GET_OBJ_AFFECT(obj), TRUE);
 
   affect_total(ch);
 }
@@ -578,7 +578,7 @@ struct obj_data *unequip_char(struct char_data *ch, int pos)
   for (j = 0; j < MAX_OBJ_AFFECT; j++)
     affect_modify(ch, obj->affected[j].location,
 		  obj->affected[j].modifier,
-		  GET_OBJ_AFFECT(obj), FALSE);
+		  (bitvector_t)GET_OBJ_AFFECT(obj), FALSE);
 
   affect_total(ch);
 

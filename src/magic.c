@@ -290,7 +290,7 @@ void mag_affects(int level, struct char_data *ch, struct char_data *victim,
     return;
 
   for (i = 0; i < MAX_SPELL_AFFECTS; i++) {
-    af[i].type = spellnum;
+    af[i].type = (sh_int)spellnum;
     af[i].bitvector = 0;
     af[i].modifier = 0;
     af[i].location = APPLY_NONE;
@@ -373,28 +373,28 @@ void mag_affects(int level, struct char_data *ch, struct char_data *victim,
     break;
 
   case SPELL_DETECT_ALIGN:
-    af[0].duration = 12 + level;
+    af[0].duration = (sh_int)12 + (sh_int)level;
     af[0].bitvector = AFF_DETECT_ALIGN;
     accum_duration = TRUE;
     to_vict = "Your eyes tingle.";
     break;
 
   case SPELL_DETECT_INVIS:
-    af[0].duration = 12 + level;
+    af[0].duration = (sh_int)12 + (sh_int)level;
     af[0].bitvector = AFF_DETECT_INVIS;
     accum_duration = TRUE;
     to_vict = "Your eyes tingle.";
     break;
 
   case SPELL_DETECT_MAGIC:
-    af[0].duration = 12 + level;
+    af[0].duration = (sh_int)12 + (sh_int)level;
     af[0].bitvector = AFF_DETECT_MAGIC;
     accum_duration = TRUE;
     to_vict = "Your eyes tingle.";
     break;
 
   case SPELL_INFRAVISION:
-    af[0].duration = 12 + level;
+    af[0].duration = (sh_int)12 + (sh_int)level;
     af[0].bitvector = AFF_INFRAVISION;
     accum_duration = TRUE;
     to_vict = "Your eyes glow red.";
@@ -814,8 +814,8 @@ void mag_points(int level, struct char_data *ch, struct char_data *victim,
     send_to_char(victim, "A warm feeling floods your body.\r\n");
     break;
   }
-  GET_HIT(victim) = MIN(GET_MAX_HIT(victim), GET_HIT(victim) + healing);
-  GET_MOVE(victim) = MIN(GET_MAX_MOVE(victim), GET_MOVE(victim) + move);
+  GET_HIT(victim) = (sh_int)MIN(GET_MAX_HIT(victim), GET_HIT(victim) + healing);
+  GET_MOVE(victim) = (sh_int)MIN(GET_MAX_MOVE(victim), GET_MOVE(victim) + move);
   update_pos(victim);
 }
 

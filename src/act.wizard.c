@@ -380,7 +380,7 @@ void do_stat_room(struct char_data *ch)
 	  zone_table[rm->zone].number, CCGRN(ch, C_NRM), rm->number,
 	  CCNRM(ch, C_NRM), IN_ROOM(ch), buf2);
 
-  sprintbit(rm->room_flags, room_bits, buf2, sizeof(buf2));
+  sprintbit((bitvector_t)rm->room_flags, room_bits, buf2, sizeof(buf2));
   send_to_char(ch, "SpecProc: %s, Flags: %s\r\n", rm->func == NULL ? "None" : "Exists", buf2);
 
   send_to_char(ch, "Description:\r\n%s", rm->description ? rm->description : "  None.\r\n");
@@ -437,7 +437,7 @@ void do_stat_room(struct char_data *ch)
     else
       snprintf(buf1, sizeof(buf1), "%s%5d%s", CCCYN(ch, C_NRM), GET_ROOM_VNUM(rm->dir_option[i]->to_room), CCNRM(ch, C_NRM));
 
-    sprintbit(rm->dir_option[i]->exit_info, exit_bits, buf2, sizeof(buf2));
+    sprintbit((bitvector_t)rm->dir_option[i]->exit_info, exit_bits, buf2, sizeof(buf2));
 
     send_to_char(ch, "Exit %s%-5s%s:  To: [%s], Key: [%5d], Keywrd: %s, Type: %s\r\n%s",
 	CCCYN(ch, C_NRM), dirs[i], CCNRM(ch, C_NRM), buf1, rm->dir_option[i]->key,
@@ -473,13 +473,13 @@ void do_stat_object(struct char_data *ch, struct obj_data *j)
     send_to_char(ch, "%s\r\n", CCNRM(ch, C_NRM));
   }
 
-  sprintbit(GET_OBJ_WEAR(j), wear_bits, buf, sizeof(buf));
+  sprintbit((bitvector_t)GET_OBJ_WEAR(j), wear_bits, buf, sizeof(buf));
   send_to_char(ch, "Can be worn on: %s\r\n", buf);
 
-  sprintbit(GET_OBJ_AFFECT(j), affected_bits, buf, sizeof(buf));
+  sprintbit((bitvector_t)GET_OBJ_AFFECT(j), affected_bits, buf, sizeof(buf));
   send_to_char(ch, "Set char bits : %s\r\n", buf);
 
-  sprintbit(GET_OBJ_EXTRA(j), extra_bits, buf, sizeof(buf));
+  sprintbit((bitvector_t)GET_OBJ_EXTRA(j), extra_bits, buf, sizeof(buf));
   send_to_char(ch, "Extra flags   : %s\r\n", buf);
 
   send_to_char(ch, "Weight: %d, Value: %d, Cost/day: %d, Timer: %d\r\n",
@@ -526,7 +526,7 @@ void do_stat_object(struct char_data *ch, struct obj_data *j)
     send_to_char(ch, "Spell: %d, - Hitpoints: %d\r\n", GET_OBJ_VAL(j, 0), GET_OBJ_VAL(j, 1));
     break;
   case ITEM_CONTAINER:
-    sprintbit(GET_OBJ_VAL(j, 1), container_bits, buf, sizeof(buf));
+    sprintbit((bitvector_t)GET_OBJ_VAL(j, 1), container_bits, buf, sizeof(buf));
     send_to_char(ch, "Weight capacity: %d, Lock Type: %s, Key Num: %d, Corpse: %s\r\n",
 	    GET_OBJ_VAL(j, 0), buf, GET_OBJ_VAL(j, 2),
 	    YESNO(GET_OBJ_VAL(j, 3)));
@@ -669,15 +669,15 @@ void do_stat_character(struct char_data *ch, struct char_data *k)
   if (IS_NPC(k)) {
     sprinttype(k->mob_specials.default_pos, position_types, buf, sizeof(buf));
     send_to_char(ch, ", Default position: %s\r\n", buf);
-    sprintbit(MOB_FLAGS(k), action_bits, buf, sizeof(buf));
+    sprintbit((bitvector_t)MOB_FLAGS(k), action_bits, buf, sizeof(buf));
     send_to_char(ch, "NPC flags: %s%s%s\r\n", CCCYN(ch, C_NRM), buf, CCNRM(ch, C_NRM));
   } else {
     send_to_char(ch, ", Idle Timer (in tics) [%d]\r\n", k->char_specials.timer);
 
-    sprintbit(PLR_FLAGS(k), player_bits, buf, sizeof(buf));
+    sprintbit((bitvector_t)PLR_FLAGS(k), player_bits, buf, sizeof(buf));
     send_to_char(ch, "PLR: %s%s%s\r\n", CCCYN(ch, C_NRM), buf, CCNRM(ch, C_NRM));
 
-    sprintbit(PRF_FLAGS(k), preference_bits, buf, sizeof(buf));
+    sprintbit((bitvector_t)PRF_FLAGS(k), preference_bits, buf, sizeof(buf));
     send_to_char(ch, "PRF: %s%s%s\r\n", CCGRN(ch, C_NRM), buf, CCNRM(ch, C_NRM));
   }
 
@@ -697,7 +697,7 @@ void do_stat_character(struct char_data *ch, struct char_data *k)
   if (!IS_NPC(k))
     send_to_char(ch, "Hunger: %d, Thirst: %d, Drunk: %d\r\n", GET_COND(k, FULL), GET_COND(k, THIRST), GET_COND(k, DRUNK));
 
-  column = send_to_char(ch, "Master is: %s, Followers are:", k->master ? GET_NAME(k->master) : "<none>");
+  column = (int)send_to_char(ch, "Master is: %s, Followers are:", k->master ? GET_NAME(k->master) : "<none>");
   if (!k->followers)
     send_to_char(ch, " <none>\r\n");
   else {
@@ -714,7 +714,7 @@ void do_stat_character(struct char_data *ch, struct char_data *k)
   }
 
   /* Showing the bitvector */
-  sprintbit(AFF_FLAGS(k), affected_bits, buf, sizeof(buf));
+  sprintbit((bitvector_t)AFF_FLAGS(k), affected_bits, buf, sizeof(buf));
   send_to_char(ch, "AFF: %s%s%s\r\n", CCYEL(ch, C_NRM), buf, CCNRM(ch, C_NRM));
 
   /* Routine to show what spells a char is affected by */
@@ -729,7 +729,7 @@ void do_stat_character(struct char_data *ch, struct char_data *k)
 	if (aff->modifier)
 	  send_to_char(ch, ", ");
 
-	sprintbit(aff->bitvector, affected_bits, buf, sizeof(buf));
+	sprintbit((bitvector_t)aff->bitvector, affected_bits, buf, sizeof(buf));
         send_to_char(ch, "sets %s", buf);
       }
       send_to_char(ch, "\r\n");
@@ -1021,7 +1021,7 @@ ACMD(do_load)
     struct char_data *mob;
     mob_rnum r_num;
 
-    if ((r_num = real_mobile(atoi(buf2))) == NOBODY) {
+    if ((r_num = real_mobile((mob_vnum)atoi(buf2))) == NOBODY) {
       send_to_char(ch, "There is no monster with that number.\r\n");
       return;
     }
@@ -1036,7 +1036,7 @@ ACMD(do_load)
     struct obj_data *obj;
     obj_rnum r_num;
 
-    if ((r_num = real_object(atoi(buf2))) == NOTHING) {
+    if ((r_num = real_object((obj_vnum)atoi(buf2))) == NOTHING) {
       send_to_char(ch, "There is no object with that number.\r\n");
       return;
     }
@@ -1073,7 +1073,7 @@ ACMD(do_vstat)
     struct char_data *mob;
     mob_rnum r_num;
 
-    if ((r_num = real_mobile(atoi(buf2))) == NOBODY) {
+    if ((r_num = real_mobile((mob_vnum)atoi(buf2))) == NOBODY) {
       send_to_char(ch, "There is no monster with that number.\r\n");
       return;
     }
@@ -1085,7 +1085,7 @@ ACMD(do_vstat)
     struct obj_data *obj;
     obj_rnum r_num;
 
-    if ((r_num = real_object(atoi(buf2))) == NOTHING) {
+    if ((r_num = real_object((obj_vnum)atoi(buf2))) == NOTHING) {
       send_to_char(ch, "There is no object with that number.\r\n");
       return;
     }
@@ -1239,7 +1239,7 @@ ACMD(do_advance)
   oldlevel = GET_LEVEL(victim);
   if (newlevel < GET_LEVEL(victim)) {
     do_start(victim);
-    GET_LEVEL(victim) = newlevel;
+    GET_LEVEL(victim) = (byte)newlevel;
     send_to_char(victim, "You are momentarily enveloped by darkness!\r\nYou feel somewhat diminished.\r\n");
   } else {
     act("$n makes some strange gestures.\r\n"
@@ -1348,7 +1348,7 @@ void perform_immort_invis(struct char_data *ch, int level)
 	  tch, TO_VICT);
   }
 
-  GET_INVIS_LEV(ch) = level;
+  GET_INVIS_LEV(ch) = (sh_int)level;
   send_to_char(ch, "Your invisibility level is %d.\r\n", level);
 }
   
@@ -1538,7 +1538,7 @@ ACMD(do_date)
     send_to_char(ch, "Current machine time: %s\r\n", tmstr);
   else {
     mytime = time(0) - boot_time;
-    d = mytime / 86400;
+    d = (int)mytime / 86400;
     h = (mytime / 3600) % 24;
     m = (mytime / 60) % 60;
 
@@ -1736,7 +1736,7 @@ ACMD(do_zreset)
   } else if (*arg == '.')
     i = world[IN_ROOM(ch)].zone;
   else {
-    j = atoi(arg);
+    j = (zone_vnum)atoi(arg);
     for (i = 0; i <= top_of_zone_table; i++)
       if (zone_table[i].number == j)
 	break;
@@ -1859,7 +1859,7 @@ ACMD(do_wizutil)
 /* FIXME: overflow possible */
 size_t print_zone_to_buf(char *bufptr, size_t left, zone_rnum zone)
 {
-  return snprintf(bufptr, left,
+  return (size_t)snprintf(bufptr, left,
 	"%3d %-30.30s Age: %3d; Reset: %3d (%1d); Range: %5d-%5d\r\n",
 	zone_table[zone].number, zone_table[zone].name,
 	zone_table[zone].age, zone_table[zone].lifespan,
@@ -1932,7 +1932,7 @@ ACMD(do_show)
     if (self)
       print_zone_to_buf(buf, sizeof(buf), world[IN_ROOM(ch)].zone);
     else if (*value && is_number(value)) {
-      for (zvn = atoi(value), zrn = 0; zone_table[zrn].number != zvn && zrn <= top_of_zone_table; zrn++);
+      for (zvn = (zone_vnum)atoi(value), zrn = 0; zone_table[zrn].number != zvn && zrn <= top_of_zone_table; zrn++);
       if (zrn <= top_of_zone_table)
 	print_zone_to_buf(buf, sizeof(buf), zrn);
       else {
@@ -1941,10 +1941,10 @@ ACMD(do_show)
       }
     } else
       for (len = zrn = 0; zrn <= top_of_zone_table; zrn++) {
-	nlen = print_zone_to_buf(buf + len, sizeof(buf) - len, zrn);
-        if (len + nlen >= sizeof(buf) || nlen < 0)
+	nlen = (int)print_zone_to_buf(buf + len, sizeof(buf) - len, zrn);
+        if (len + (unsigned long)nlen >= sizeof(buf) || nlen < 0)
           break;
-        len += nlen;
+        len += (unsigned long)nlen;
       }
     page_string(ch->desc, buf, TRUE);
     break;
@@ -2023,9 +2023,9 @@ ACMD(do_show)
       for (j = 0; j < NUM_OF_DIRS; j++)
 	if (world[i].dir_option[j] && world[i].dir_option[j]->to_room == 0) {
 	  nlen = snprintf(buf + len, sizeof(buf) - len, "%2d: [%5d] %s\r\n", ++k, GET_ROOM_VNUM(i), world[i].name);
-          if (len + nlen >= sizeof(buf) || nlen < 0)
+          if (len + (unsigned long)nlen >= sizeof(buf) || nlen < 0)
             break;
-          len += nlen;
+          len += (unsigned long)nlen;
         }
     page_string(ch->desc, buf, TRUE);
     break;
@@ -2036,9 +2036,9 @@ ACMD(do_show)
     for (i = 0, j = 0; i <= top_of_world; i++)
       if (ROOM_FLAGGED(i, ROOM_DEATH)) {
         nlen = snprintf(buf + len, sizeof(buf) - len, "%2d: [%5d] %s\r\n", ++j, GET_ROOM_VNUM(i), world[i].name);
-        if (len + nlen >= sizeof(buf) || nlen < 0)
+        if (len + (unsigned long)nlen >= sizeof(buf) || nlen < 0)
           break;
-        len += nlen;
+        len += (unsigned long)nlen;
       }
     page_string(ch->desc, buf, TRUE);
     break;
@@ -2049,9 +2049,9 @@ ACMD(do_show)
     for (i = 0, j = 0; i <= top_of_world; i++)
       if (ROOM_FLAGGED(i, ROOM_GODROOM)) {
         nlen = snprintf(buf + len, sizeof(buf) - len, "%2d: [%5d] %s\r\n", ++j, GET_ROOM_VNUM(i), world[i].name);
-        if (len + nlen >= sizeof(buf) || nlen < 0)
+        if (len + (unsigned long)nlen >= sizeof(buf) || nlen < 0)
           break;
-        len += nlen;
+        len += (unsigned long)nlen;
       }
     page_string(ch->desc, buf, TRUE);
     break;
@@ -2232,27 +2232,27 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
     send_to_char(ch, "Nosummon %s for %s.\r\n", ONOFF(!on), GET_NAME(vict));
     break;
   case 4:
-    vict->points.max_hit = RANGE(1, 5000);
+    vict->points.max_hit = (sh_int)RANGE(1, 5000);
     affect_total(vict);
     break;
   case 5:
-    vict->points.max_mana = RANGE(1, 5000);
+    vict->points.max_mana = (sh_int)RANGE(1, 5000);
     affect_total(vict);
     break;
   case 6:
-    vict->points.max_move = RANGE(1, 5000);
+    vict->points.max_move = (sh_int)RANGE(1, 5000);
     affect_total(vict);
     break;
   case 7:
-    vict->points.hit = RANGE(-9, vict->points.max_hit);
+    vict->points.hit = (sh_int)RANGE(-9, vict->points.max_hit);
     affect_total(vict);
     break;
   case 8:
-    vict->points.mana = RANGE(0, vict->points.max_mana);
+    vict->points.mana = (sh_int)RANGE(0, vict->points.max_mana);
     affect_total(vict);
     break;
   case 9:
-    vict->points.move = RANGE(0, vict->points.max_move);
+    vict->points.move = (sh_int)RANGE(0, vict->points.max_move);
     affect_total(vict);
     break;
   case 10:
@@ -2264,12 +2264,12 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
       RANGE(3, 25);
     else
       RANGE(3, 18);
-    vict->real_abils.str = value;
+    vict->real_abils.str = (sbyte)value;
     vict->real_abils.str_add = 0;
     affect_total(vict);
     break;
   case 12:
-    vict->real_abils.str_add = RANGE(0, 100);
+    vict->real_abils.str_add = (sbyte)RANGE(0, 100);
     if (value > 0)
       vict->real_abils.str = 18;
     affect_total(vict);
@@ -2279,7 +2279,7 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
       RANGE(3, 25);
     else
       RANGE(3, 18);
-    vict->real_abils.intel = value;
+    vict->real_abils.intel = (sbyte)value;
     affect_total(vict);
     break;
   case 14:
@@ -2287,7 +2287,7 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
       RANGE(3, 25);
     else
       RANGE(3, 18);
-    vict->real_abils.wis = value;
+    vict->real_abils.wis = (sbyte)value;
     affect_total(vict);
     break;
   case 15:
@@ -2295,7 +2295,7 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
       RANGE(3, 25);
     else
       RANGE(3, 18);
-    vict->real_abils.dex = value;
+    vict->real_abils.dex = (sbyte)value;
     affect_total(vict);
     break;
   case 16:
@@ -2303,7 +2303,7 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
       RANGE(3, 25);
     else
       RANGE(3, 18);
-    vict->real_abils.con = value;
+    vict->real_abils.con = (sbyte)value;
     affect_total(vict);
     break;
   case 17:
@@ -2311,11 +2311,11 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
       RANGE(3, 25);
     else
       RANGE(3, 18);
-    vict->real_abils.cha = value;
+    vict->real_abils.cha = (sbyte)value;
     affect_total(vict);
     break;
   case 18:
-    vict->points.armor = RANGE(-100, 100);
+    vict->points.armor = (sh_int)RANGE(-100, 100);
     affect_total(vict);
     break;
   case 19:
@@ -2328,11 +2328,11 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
     vict->points.exp = RANGE(0, 50000000);
     break;
   case 22:
-    vict->points.hitroll = RANGE(-20, 20);
+    vict->points.hitroll = (sbyte)RANGE(-20, 20);
     affect_total(vict);
     break;
   case 23:
-    vict->points.damroll = RANGE(-20, 20);
+    vict->points.damroll = (sbyte)RANGE(-20, 20);
     affect_total(vict);
     break;
   case 24:
@@ -2340,7 +2340,7 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
       send_to_char(ch, "You aren't godly enough for that!\r\n");
       return (0);
     }
-    GET_INVIS_LEV(vict) = RANGE(0, GET_LEVEL(vict));
+    GET_INVIS_LEV(vict) = (sh_int)RANGE(0, GET_LEVEL(vict));
     break;
   case 25:
     if (GET_LEVEL(ch) < LVL_IMPL && ch != vict) {
@@ -2369,7 +2369,7 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
     } else if (is_number(val_arg)) {
       value = atoi(val_arg);
       RANGE(0, 24);
-      GET_COND(vict, (mode - 29)) = value; /* and here too */
+      GET_COND(vict, (mode - 29)) = (sbyte)value; /* and here too */
       send_to_char(ch, "%s's %s set to %d.\r\n", GET_NAME(vict), set_fields[mode].cmd, value);
     } else {
       send_to_char(ch, "Must be 'off' or a value from 0 to 24.\r\n");
@@ -2388,10 +2388,10 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
       return (0);
     }
     RANGE(0, LVL_IMPL);
-    vict->player.level = value;
+    vict->player.level = (byte)value;
     break;
   case 35:
-    if ((rnum = real_room(value)) == NOWHERE) {
+    if ((rnum = real_room((room_vnum)value)) == NOWHERE) {
       send_to_char(ch, "No room exists with that number.\r\n");
       return (0);
     }
@@ -2413,7 +2413,7 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
       send_to_char(ch, "That is not a class.\r\n");
       return (0);
     }
-    GET_CLASS(vict) = i;
+    GET_CLASS(vict) = (byte)i;
     break;
   case 40:
     SET_OR_REMOVE(PLR_FLAGS(vict), PLR_NOWIZLIST);
@@ -2425,7 +2425,7 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
     if (!str_cmp(val_arg, "off")) {
       REMOVE_BIT(PLR_FLAGS(vict), PLR_LOADROOM);
     } else if (is_number(val_arg)) {
-      rvnum = atoi(val_arg);
+      rvnum = (room_vnum)atoi(val_arg);
       if (real_room(rvnum) != NOWHERE) {
         SET_BIT(PLR_FLAGS(vict), PLR_LOADROOM);
 	GET_LOADROOM(vict) = rvnum;
@@ -2468,7 +2468,7 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
       send_to_char(ch, "Must be 'male', 'female', or 'neutral'.\r\n");
       return (0);
     }
-    GET_SEX(vict) = i;
+    GET_SEX(vict) = (byte)i;
     break;
   case 48:	/* set age */
     if (value < 2 || value > 200) {	/* Arbitrary limits. */
@@ -2484,12 +2484,12 @@ int perform_set(struct char_data *ch, struct char_data *vict, int mode,
     break;
 
   case 49:	/* Blame/Thank Rick Glover. :) */
-    GET_HEIGHT(vict) = value;
+    GET_HEIGHT(vict) = (ubyte)value;
     affect_total(vict);
     break;
 
   case 50:
-    GET_WEIGHT(vict) = value;
+    GET_WEIGHT(vict) = (ubyte)value;
     affect_total(vict);
     break;
 
@@ -2561,9 +2561,9 @@ ACMD(do_set)
   }
 
   /* find the command in the list */
-  len = strlen(field);
+  len = (int)strlen(field);
   for (mode = 0; *(set_fields[mode].cmd) != '\n'; mode++)
-    if (!strncmp(field, set_fields[mode].cmd, len))
+    if (!strncmp(field, set_fields[mode].cmd, (unsigned long)len))
       break;
 
   /* perform the set */
@@ -2575,7 +2575,7 @@ ACMD(do_set)
       save_char(vict);
     if (is_file) {
       char_to_store(vict, &tmp_store);
-      fseek(player_fl, (player_i) * sizeof(struct char_file_u), SEEK_SET);
+      fseek(player_fl, ((int)player_i) * (int)sizeof(struct char_file_u), SEEK_SET);
       fwrite(&tmp_store, sizeof(struct char_file_u), 1, player_fl);
       send_to_char(ch, "Saved in file.\r\n");
     }

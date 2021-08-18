@@ -170,7 +170,7 @@ void write_to_file(void *buf, int size, long filepos)
     return;
   }
   fseek(mail_file, filepos, SEEK_SET);
-  fwrite(buf, size, 1, mail_file);
+  fwrite(buf, (unsigned long)size, 1, mail_file);
 
   /* find end of file */
   fseek(mail_file, 0L, SEEK_END);
@@ -204,7 +204,7 @@ void read_from_file(void *buf, int size, long filepos)
   }
 
   fseek(mail_file, filepos, SEEK_SET);
-  fread(buf, size, 1, mail_file);
+  fread(buf, (unsigned long)size, 1, mail_file);
   fclose(mail_file);
   return;
 }
@@ -306,7 +306,7 @@ void store_mail(long to, long from, char *message_pointer)
   data_block_type data;
   long last_address, target_address;
   char *msg_txt = message_pointer;
-  int bytes_written, total_length = strlen(message_pointer);
+  int bytes_written, total_length = (int)strlen(message_pointer);
 
   if ((sizeof(header_block_type) != sizeof(data_block_type)) ||
       (sizeof(header_block_type) != BLOCK_SIZE)) {

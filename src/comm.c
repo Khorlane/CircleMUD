@@ -295,7 +295,7 @@ int main(int argc, char **argv)
     if (!isdigit(*argv[pos])) {
       printf("Usage: %s [-c] [-m] [-q] [-r] [-s] [-d pathname] [port #]\n", argv[0]);
       exit(1);
-    } else if ((port = atoi(argv[pos])) <= 1024) {
+    } else if ((port = (ush_int)atoi(argv[pos])) <= 1024) {
       printf("SYSERR: Illegal port number %d.\n", port);
       exit(1);
     }
@@ -353,7 +353,7 @@ void init_game(ush_int port)
   /* We don't want to restart if we crash before we get up. */
   touch(KILLSCRIPT_FILE);
 
-  circle_srandom(time(0));
+  circle_srandom((unsigned long)time(0));
 
   log("Finding player limit.");
   max_players = get_max_players();
@@ -530,7 +530,7 @@ int get_max_players(void)
     if (limit.rlim_max == RLIM_INFINITY)
       max_descs = max_playing + NUM_RESERVED_DESCS;
     else
-      max_descs = MIN(max_playing + NUM_RESERVED_DESCS, limit.rlim_max);
+      max_descs = MIN(max_playing + NUM_RESERVED_DESCS, (int)limit.rlim_max);
 #else
     max_descs = MIN(max_playing + NUM_RESERVED_DESCS, limit.rlim_max);
 #endif
@@ -656,7 +656,7 @@ void game_loop(socket_t mother_desc)
     if (process_time.tv_sec == 0 && process_time.tv_usec < OPT_USEC) {
       missed_pulses = 0;
     } else {
-      missed_pulses = process_time.tv_sec * PASSES_PER_SEC;
+      missed_pulses = (int)process_time.tv_sec * PASSES_PER_SEC;
       missed_pulses += process_time.tv_usec / OPT_USEC;
       process_time.tv_sec = 0;
       process_time.tv_usec = process_time.tv_usec % OPT_USEC;
@@ -1005,25 +1005,25 @@ char *make_prompt(struct descriptor_data *d)
     if (GET_INVIS_LEV(d->character) && len < sizeof(prompt)) {
       count = snprintf(prompt + len, sizeof(prompt) - len, "i%d ", GET_INVIS_LEV(d->character));
       if (count >= 0)
-        len += count;
+        len += (unsigned long)count;
     }
 
     if (PRF_FLAGGED(d->character, PRF_DISPHP) && len < sizeof(prompt)) {
       count = snprintf(prompt + len, sizeof(prompt) - len, "%dH ", GET_HIT(d->character));
       if (count >= 0)
-        len += count;
+        len += (unsigned long)count;
     }
 
     if (PRF_FLAGGED(d->character, PRF_DISPMANA) && len < sizeof(prompt)) {
       count = snprintf(prompt + len, sizeof(prompt) - len, "%dM ", GET_MANA(d->character));
       if (count >= 0)
-        len += count;
+        len += (unsigned long)count;
     }
 
     if (PRF_FLAGGED(d->character, PRF_DISPMOVE) && len < sizeof(prompt)) {
       count = snprintf(prompt + len, sizeof(prompt) - len, "%dV ", GET_MOVE(d->character));
       if (count >= 0)
-        len += count;
+        len += (unsigned long)count;
     }
 
     if (len < sizeof(prompt))
@@ -1124,7 +1124,8 @@ size_t vwrite_to_output(struct descriptor_data *t, const char *format, va_list a
   if (t->bufspace == 0)
     return (0);
 
-  wantsize = size = vsnprintf(txt, sizeof(txt), format, args);
+  size = vsnprintf(txt, sizeof(txt), format, args);
+  wantsize = (size_t)size;
   /* If exceeding the size of the buffer, truncate it for the overflow message */
   if (size < 0 || wantsize >= sizeof(txt)) {
     size = sizeof(txt) - 1;
@@ -1150,7 +1151,7 @@ size_t vwrite_to_output(struct descriptor_data *t, const char *format, va_list a
     strcpy(t->output + t->bufptr, txt);	/* strcpy: OK (size checked above) */
     t->bufspace -= size;
     t->bufptr += size;
-    return (t->bufspace);
+    return ((size_t)t->bufspace);
   }
 
   buf_switches++;
@@ -1170,12 +1171,12 @@ size_t vwrite_to_output(struct descriptor_data *t, const char *format, va_list a
   strcat(t->output, txt);	/* strcat: OK (size checked) */
 
   /* set the pointer for the next write */
-  t->bufptr = strlen(t->output);
+  t->bufptr = (int)strlen(t->output);
 
   /* calculate how much space is left in the buffer */
   t->bufspace = LARGE_BUFSIZE - 1 - t->bufptr;
 
-  return (t->bufspace);
+  return ((size_t)t->bufspace);
 }
 
 
@@ -1241,7 +1242,7 @@ int parse_ip(const char *addr, struct in_addr *inaddr)
   if ((ip = inet_addr(addr)) == -1) {
     return (0);
   } else {
-    inaddr->s_addr = (unsigned long) ip;
+    inaddr->s_addr = (in_addr_t)ip;
     return (1);
   }
 }
@@ -1602,15 +1603,15 @@ int write_to_descriptor(socket_t desc, const char *txt)
       return (-1);
     } else if (bytes_written == 0) {
       /* Temporary failure -- socket buffer full. */
-      return (write_total);
+      return ((int)write_total);
     } else {
       txt += bytes_written;
-      total -= bytes_written;
-      write_total += bytes_written;
+      total -= (unsigned long)bytes_written;
+      write_total += (unsigned long)bytes_written;
     }
   }
 
-  return (write_total);
+  return ((int)write_total);
 }
 
 
@@ -1707,9 +1708,9 @@ int process_input(struct descriptor_data *t)
   char tmp[MAX_INPUT_LENGTH];
 
   /* first, find the point where we left off reading data */
-  buf_length = strlen(t->inbuf);
+  buf_length = (int)strlen(t->inbuf);
   read_point = t->inbuf + buf_length;
-  space_left = MAX_RAW_INPUT_LENGTH - buf_length - 1;
+  space_left = MAX_RAW_INPUT_LENGTH - (size_t)buf_length - 1;
 
   do {
     if (space_left <= 0) {
@@ -1734,7 +1735,7 @@ int process_input(struct descriptor_data *t)
 	nl_pos = ptr;
 
     read_point += bytes_read;
-    space_left -= bytes_read;
+    space_left -= (unsigned long)bytes_read;
 
 /*
  * on some systems such as AIX, POSIX-standard nonblocking I/O is broken,
@@ -1886,7 +1887,7 @@ int perform_subst(struct descriptor_data *t, char *orig, char *subst)
   /* now, we construct the new string for output. */
 
   /* first, everything in the original, up to the string to be replaced */
-  strncpy(newsub, orig, strpos - orig);	/* strncpy: OK (newsub:MAX_INPUT_LENGTH+5 > orig:MAX_INPUT_LENGTH) */
+  strncpy(newsub, orig, (size_t)strpos - (size_t)orig);	/* strncpy: OK (newsub:MAX_INPUT_LENGTH+5 > orig:MAX_INPUT_LENGTH) */
   newsub[strpos - orig] = '\0';
 
   /* now, the replacement string */
@@ -1894,7 +1895,7 @@ int perform_subst(struct descriptor_data *t, char *orig, char *subst)
 
   /* now, if there's anything left in the original after the string to
    * replaced, copy that too. */
-  if (((strpos - orig) + strlen(first)) < strlen(orig))
+  if ((((size_t)strpos - (size_t)orig) + strlen(first)) < strlen(orig))
     strncat(newsub, strpos + strlen(first), MAX_INPUT_LENGTH - strlen(newsub) - 1);	/* strncpy: OK */
 
   /* terminate the string in case of an overflow from strncat */

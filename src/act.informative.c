@@ -418,7 +418,7 @@ void look_at_room(struct char_data *ch, int ignore_brief)
   if (!IS_NPC(ch) && PRF_FLAGGED(ch, PRF_ROOMFLAGS)) {
     char buf[MAX_STRING_LENGTH];
 
-    sprintbit(ROOM_FLAGS(IN_ROOM(ch)), room_bits, buf, sizeof(buf));
+    sprintbit((bitvector_t)ROOM_FLAGS(IN_ROOM(ch)), room_bits, buf, sizeof(buf));
     send_to_char(ch, "[%5d] %s [ %s]", GET_ROOM_VNUM(IN_ROOM(ch)), world[IN_ROOM(ch)].name, buf);
   } else
     send_to_char(ch, "%s", world[IN_ROOM(ch)].name);
@@ -926,7 +926,7 @@ ACMD(do_help)
 
   bot = 0;
   top = top_of_helpt;
-  minlen = strlen(argument);
+  minlen = (int)strlen(argument);
 
   for (;;) {
     mid = (bot + top) / 2;
@@ -934,10 +934,10 @@ ACMD(do_help)
     if (bot > top) {
       send_to_char(ch, "There is no help on that word.\r\n");
       return;
-    } else if (!(chk = strn_cmp(argument, help_table[mid].keyword, minlen))) {
+    } else if (!(chk = strn_cmp(argument, help_table[mid].keyword, (size_t)minlen))) {
       /* trace backwards to find first matching entry. Thanks Jeff Fink! */
       while ((mid > 0) &&
-	 (!(chk = strn_cmp(argument, help_table[mid - 1].keyword, minlen))))
+	 (!(chk = strn_cmp(argument, help_table[mid - 1].keyword, (size_t)minlen))))
 	mid--;
       page_string(ch->desc, help_table[mid].entry, 0);
       return;
@@ -1010,7 +1010,7 @@ ACMD(do_who)
 	break;
       case 'c':
 	half_chop(buf1, arg, buf);
-	showclass = find_class_bitvector(arg);
+	showclass = (int)find_class_bitvector(arg);
 	break;
       default:
 	send_to_char(ch, "%s", WHO_FORMAT);
@@ -1154,7 +1154,7 @@ ACMD(do_users)
       case 'c':
 	playing = 1;
 	half_chop(buf1, arg, buf);
-	showclass = find_class_bitvector(arg);
+	showclass = (int)find_class_bitvector(arg);
 	break;
       default:
 	send_to_char(ch, "%s", USERS_FORMAT);
@@ -1419,26 +1419,26 @@ ACMD(do_levels)
 
   for (i = 1; i < LVL_IMMORT; i++) {
     nlen = snprintf(buf + len, sizeof(buf) - len, "[%2d] %8d-%-8d : ", i,
-		level_exp(GET_CLASS(ch), i), level_exp(GET_CLASS(ch), i + 1) - 1);
-    if (len + nlen >= sizeof(buf) || nlen < 0)
+		level_exp(GET_CLASS(ch), (int)i), level_exp(GET_CLASS(ch), (int)i + 1) - 1);
+    if (len + (unsigned long)nlen >= sizeof(buf) || nlen < 0)
       break;
-    len += nlen;
+    len += (unsigned long)nlen;
 
     switch (GET_SEX(ch)) {
     case SEX_MALE:
     case SEX_NEUTRAL:
-      nlen = snprintf(buf + len, sizeof(buf) - len, "%s\r\n", title_male(GET_CLASS(ch), i));
+      nlen = snprintf(buf + len, sizeof(buf) - len, "%s\r\n", title_male(GET_CLASS(ch), (int)i));
       break;
     case SEX_FEMALE:
-      nlen = snprintf(buf + len, sizeof(buf) - len, "%s\r\n", title_female(GET_CLASS(ch), i));
+      nlen = snprintf(buf + len, sizeof(buf) - len, "%s\r\n", title_female(GET_CLASS(ch), (int)i));
       break;
     default:
       nlen = snprintf(buf + len, sizeof(buf) - len, "Oh dear.  You seem to be sexless.\r\n");
       break;
     }
-    if (len + nlen >= sizeof(buf) || nlen < 0)
+    if (len + (unsigned long)nlen >= sizeof(buf) || nlen < 0)
       break;
-    len += nlen;
+    len += (unsigned long)nlen;
   }
 
   if (len < sizeof(buf))
@@ -1631,13 +1631,13 @@ void sort_commands(void)
     num_of_cmds++;
   num_of_cmds++;	/* \n */
 
-  CREATE(cmd_sort_info, int, num_of_cmds);
+  CREATE(cmd_sort_info, int, (unsigned long)num_of_cmds);
 
   for (a = 0; a < num_of_cmds; a++)
     cmd_sort_info[a] = a;
 
   /* Don't sort the RESERVED or \n entries. */
-  qsort(cmd_sort_info + 1, num_of_cmds - 2, sizeof(int), sort_commands_helper);
+  qsort(cmd_sort_info + 1, (size_t)num_of_cmds - 2, sizeof(int), sort_commands_helper);
 }
 
 

@@ -1406,7 +1406,7 @@ void roll_real_abils(struct char_data *ch)
   for (i = 0; i < 6; i++) {
 
     for (j = 0; j < 4; j++)
-      rolls[j] = rand_number(1, 6);
+      rolls[j] = (ubyte)rand_number(1, 6);
 
     temp = rolls[0] + rolls[1] + rolls[2] + rolls[3] -
       MIN(rolls[0], MIN(rolls[1], MIN(rolls[2], rolls[3])));
@@ -1423,38 +1423,38 @@ void roll_real_abils(struct char_data *ch)
 
   switch (GET_CLASS(ch)) {
   case CLASS_MAGIC_USER:
-    ch->real_abils.intel = table[0];
-    ch->real_abils.wis = table[1];
-    ch->real_abils.dex = table[2];
-    ch->real_abils.str = table[3];
-    ch->real_abils.con = table[4];
-    ch->real_abils.cha = table[5];
+    ch->real_abils.intel = (sbyte)table[0];
+    ch->real_abils.wis = (sbyte)table[1];
+    ch->real_abils.dex = (sbyte)table[2];
+    ch->real_abils.str = (sbyte)table[3];
+    ch->real_abils.con = (sbyte)table[4];
+    ch->real_abils.cha = (sbyte)table[5];
     break;
   case CLASS_CLERIC:
-    ch->real_abils.wis = table[0];
-    ch->real_abils.intel = table[1];
-    ch->real_abils.str = table[2];
-    ch->real_abils.dex = table[3];
-    ch->real_abils.con = table[4];
-    ch->real_abils.cha = table[5];
+    ch->real_abils.wis = (sbyte)table[0];
+    ch->real_abils.intel = (sbyte)table[1];
+    ch->real_abils.str = (sbyte)table[2];
+    ch->real_abils.dex = (sbyte)table[3];
+    ch->real_abils.con = (sbyte)table[4];
+    ch->real_abils.cha = (sbyte)table[5];
     break;
   case CLASS_THIEF:
-    ch->real_abils.dex = table[0];
-    ch->real_abils.str = table[1];
-    ch->real_abils.con = table[2];
-    ch->real_abils.intel = table[3];
-    ch->real_abils.wis = table[4];
-    ch->real_abils.cha = table[5];
+    ch->real_abils.dex = (sbyte)table[0];
+    ch->real_abils.str = (sbyte)table[1];
+    ch->real_abils.con = (sbyte)table[2];
+    ch->real_abils.intel = (sbyte)table[3];
+    ch->real_abils.wis = (sbyte)table[4];
+    ch->real_abils.cha = (sbyte)table[5];
     break;
   case CLASS_WARRIOR:
-    ch->real_abils.str = table[0];
-    ch->real_abils.dex = table[1];
-    ch->real_abils.con = table[2];
-    ch->real_abils.wis = table[3];
-    ch->real_abils.intel = table[4];
-    ch->real_abils.cha = table[5];
+    ch->real_abils.str = (sbyte)table[0];
+    ch->real_abils.dex = (sbyte)table[1];
+    ch->real_abils.con = (sbyte)table[2];
+    ch->real_abils.wis = (sbyte)table[3];
+    ch->real_abils.intel = (sbyte)table[4];
+    ch->real_abils.cha = (sbyte)table[5];
     if (ch->real_abils.str == 18)
-      ch->real_abils.str_add = rand_number(0, 100);
+      ch->real_abils.str_add = (sbyte)rand_number(0, 100);
     break;
   }
   ch->aff_abils = ch->real_abils;

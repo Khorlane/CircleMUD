@@ -131,7 +131,7 @@ void list_skills(struct char_data *ch)
     return;
   }
 
-  len = snprintf(buf2, sizeof(buf2), "You have %d practice session%s remaining.\r\n"
+  len = (size_t)snprintf(buf2, sizeof(buf2), "You have %d practice session%s remaining.\r\n"
 	"You know of the following %ss:\r\n", GET_PRACTICES(ch),
 	GET_PRACTICES(ch) == 1 ? "" : "s", SPLSKL(ch));
   
@@ -139,9 +139,9 @@ void list_skills(struct char_data *ch)
     i = spell_sort_info[sortpos];
     if (GET_LEVEL(ch) >= spell_info[i].min_level[(int) GET_CLASS(ch)]) {
       nlen = snprintf(buf2 + len, sizeof(buf2) - len, "%-20s %s\r\n", spell_info[i].name, how_good(GET_SKILL(ch, i)));
-      if (len + nlen >= sizeof(buf2) || nlen < 0)
+      if (len + (unsigned long)nlen >= sizeof(buf2) || nlen < 0)
         break;
-      len += nlen;
+      len += (unsigned long)nlen;
     }
   }
   if (len >= sizeof(buf2))
@@ -186,7 +186,7 @@ SPECIAL(guild)
   percent = GET_SKILL(ch, skill_num);
   percent += MIN(MAXGAIN(ch), MAX(MINGAIN(ch), int_app[GET_INT(ch)].learn));
 
-  SET_SKILL(ch, skill_num, MIN(LEARNED(ch), percent));
+  SET_SKILL(ch, skill_num, (byte)MIN(LEARNED(ch), percent));
 
   if (GET_SKILL(ch, skill_num) >= LEARNED(ch))
     send_to_char(ch, "You are now learned in that area.\r\n");

@@ -258,7 +258,7 @@ int Crash_delete_crashfile(struct char_data *ch)
       log("SYSERR: checking for crash file %s (3): %s", filename, strerror(errno));
     return (0);
   }
-  numread = fread(&rent, sizeof(struct rent_info), 1, fl);
+  numread = (int)fread(&rent, sizeof(struct rent_info), 1, fl);
   fclose(fl);
 
   if (numread == 0)
@@ -289,7 +289,7 @@ int Crash_clean_file(char *name)
       log("SYSERR: OPENING OBJECT FILE %s (4): %s", filename, strerror(errno));
     return (0);
   }
-  numread = fread(&rent, sizeof(struct rent_info), 1, fl);
+  numread = (int)fread(&rent, sizeof(struct rent_info), 1, fl);
   fclose(fl);
 
   if (numread == 0)
@@ -354,7 +354,7 @@ void Crash_listrent(struct char_data *ch, char *name)
     send_to_char(ch, "%s has no rent file.\r\n", name);
     return;
   }
-  numread = fread(&rent, sizeof(struct rent_info), 1, fl);
+  numread = (int)fread(&rent, sizeof(struct rent_info), 1, fl);
 
   /* Oops, can't get the data, punt. */
   if (numread == 0) {
@@ -461,7 +461,7 @@ int Crash_load(struct char_data *ch)
 
   if (rent.rentcode == RENT_RENTED || rent.rentcode == RENT_TIMEDOUT) {
     num_of_days = (float) (time(0) - rent.time) / SECS_PER_REAL_DAY;
-    cost = (int) (rent.net_cost_per_diem * num_of_days);
+    cost = (int) ((float)rent.net_cost_per_diem * num_of_days);
     if (cost > GET_GOLD(ch) + GET_BANK_GOLD(ch)) {
       fclose(fl);
       mudlog(BRF, MAX(LVL_IMMORT, GET_INVIS_LEV(ch)), TRUE, "%s entering game, rented equipment lost (no $).", GET_NAME(ch));
@@ -609,7 +609,7 @@ int Crash_load(struct char_data *ch)
 
   /* turn this into a crash file by re-writing the control block */
   rent.rentcode = RENT_CRASH;
-  rent.time = time(0);
+  rent.time = (int)time(0);
   rewind(fl);
   Crash_write_rentcode(ch, fl, &rent);
 
@@ -745,7 +745,7 @@ void Crash_crashsave(struct char_data *ch)
     return;
 
   rent.rentcode = RENT_CRASH;
-  rent.time = time(0);
+  rent.time = (int)time(0);
   if (!Crash_write_rentcode(ch, fp, &rent)) {
     fclose(fp);
     return;
@@ -824,7 +824,7 @@ void Crash_idlesave(struct char_data *ch)
   rent.net_cost_per_diem = cost;
 
   rent.rentcode = RENT_TIMEDOUT;
-  rent.time = time(0);
+  rent.time = (int)time(0);
   rent.gold = GET_GOLD(ch);
   rent.account = GET_BANK_GOLD(ch);
   if (!Crash_write_rentcode(ch, fp, &rent)) {
@@ -871,7 +871,7 @@ void Crash_rentsave(struct char_data *ch, int cost)
 
   rent.net_cost_per_diem = cost;
   rent.rentcode = RENT_RENTED;
-  rent.time = time(0);
+  rent.time = (int)time(0);
   rent.gold = GET_GOLD(ch);
   rent.account = GET_BANK_GOLD(ch);
   if (!Crash_write_rentcode(ch, fp, &rent)) {
@@ -918,7 +918,7 @@ void Crash_cryosave(struct char_data *ch, int cost)
   GET_GOLD(ch) = MAX(0, GET_GOLD(ch) - cost);
 
   rent.rentcode = RENT_CRYO;
-  rent.time = time(0);
+  rent.time = (int)time(0);
   rent.gold = GET_GOLD(ch);
   rent.account = GET_BANK_GOLD(ch);
   rent.net_cost_per_diem = 0;
@@ -1054,7 +1054,7 @@ int Crash_offer_rent(struct char_data *ch, struct char_data *recep,
     } else if (factor == RENT_FACTOR)
       Crash_rent_deadline(ch, recep, totalcost);
   }
-  return (totalcost);
+  return ((int)totalcost);
 }
 
 

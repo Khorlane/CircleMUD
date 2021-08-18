@@ -768,7 +768,7 @@ void name_from_drinkcon(struct obj_data *obj)
     return;
   }
 
-  liqlen = strlen(liqname);
+  liqlen = (int)strlen(liqname);
   CREATE(new_name, char, strlen(obj->name) - strlen(liqname)); /* +1 for NUL, -1 for space */
 
   for (cur_name = obj->name; cur_name; cur_name = next) {
@@ -776,16 +776,16 @@ void name_from_drinkcon(struct obj_data *obj)
       cur_name++;
 
     if ((next = strchr(cur_name, ' ')))
-      cpylen = next - cur_name;
+      cpylen = (int)next - (int)cur_name;
     else
-      cpylen = strlen(cur_name);
+      cpylen = (int)strlen(cur_name);
 
-    if (!strn_cmp(cur_name, liqname, liqlen))
+    if (!strn_cmp(cur_name, liqname, (size_t)liqlen))
       continue;
 
     if (*new_name)
       strcat(new_name, " ");	/* strcat: OK (size precalculated) */
-    strncat(new_name, cur_name, cpylen);	/* strncat: OK (size precalculated) */
+    strncat(new_name, cur_name, (unsigned long)cpylen);	/* strncat: OK (size precalculated) */
   }
 
   if (GET_OBJ_RNUM(obj) == NOTHING || obj->name != obj_proto[GET_OBJ_RNUM(obj)].name)
@@ -904,7 +904,7 @@ ACMD(do_drink)
     act("$n chokes and utters some strange sounds.", TRUE, ch, 0, 0, TO_ROOM);
 
     af.type = SPELL_POISON;
-    af.duration = amount * 3;
+    af.duration = (sh_int)amount * 3;
     af.modifier = 0;
     af.location = APPLY_NONE;
     af.bitvector = AFF_POISON;
@@ -976,7 +976,7 @@ ACMD(do_eat)
     act("$n coughs and utters some strange sounds.", FALSE, ch, 0, 0, TO_ROOM);
 
     af.type = SPELL_POISON;
-    af.duration = amount * 2;
+    af.duration = (sh_int)amount * 2;
     af.modifier = 0;
     af.location = APPLY_NONE;
     af.bitvector = AFF_POISON;

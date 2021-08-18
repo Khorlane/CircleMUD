@@ -579,12 +579,12 @@ void build_player_index(void)
   fseek(player_fl, 0L, SEEK_END);
   size = ftell(player_fl);
   rewind(player_fl);
-  if (size % sizeof(struct char_file_u))
+  if (size % (long)sizeof(struct char_file_u))
     log("\aWARNING:  PLAYERFILE IS PROBABLY CORRUPT!");
-  recs = size / sizeof(struct char_file_u);
+  recs = size / (long)sizeof(struct char_file_u);
   if (recs) {
     log("   %ld players in database.", recs);
-    CREATE(player_table, struct player_index_element, recs);
+    CREATE(player_table, struct player_index_element, (unsigned long)recs);
   } else {
     player_table = NULL;
     top_of_p_table = -1;
@@ -602,7 +602,7 @@ void build_player_index(void)
     for (i = 0; (*(player_table[nr].name + i) = LOWER(*(dummy.name + i))); i++)
       ;
     player_table[nr].id = dummy.char_specials_saved.idnum;
-    top_idnum = MAX(top_idnum, dummy.char_specials_saved.idnum);
+    top_idnum = MAX((int)top_idnum, (int)dummy.char_specials_saved.idnum);
   }
 
   top_of_p_table = nr;
@@ -746,32 +746,32 @@ void index_boot(int mode)
    */
   switch (mode) {
   case DB_BOOT_WLD:
-    CREATE(world, struct room_data, rec_count);
-    size[0] = sizeof(struct room_data) * rec_count;
+    CREATE(world, struct room_data, (unsigned long)rec_count);
+    size[0] = (int)sizeof(struct room_data) * (int)rec_count;
     log("   %d rooms, %d bytes.", rec_count, size[0]);
     break;
   case DB_BOOT_MOB:
-    CREATE(mob_proto, struct char_data, rec_count);
-    CREATE(mob_index, struct index_data, rec_count);
-    size[0] = sizeof(struct index_data) * rec_count;
-    size[1] = sizeof(struct char_data) * rec_count;
+    CREATE(mob_proto, struct char_data, (unsigned long)rec_count);
+    CREATE(mob_index, struct index_data, (unsigned long)rec_count);
+    size[0] = (int)sizeof(struct index_data) * (int)rec_count;
+    size[1] = (int)sizeof(struct char_data) * (int)rec_count;
     log("   %d mobs, %d bytes in index, %d bytes in prototypes.", rec_count, size[0], size[1]);
     break;
   case DB_BOOT_OBJ:
-    CREATE(obj_proto, struct obj_data, rec_count);
-    CREATE(obj_index, struct index_data, rec_count);
-    size[0] = sizeof(struct index_data) * rec_count;
-    size[1] = sizeof(struct obj_data) * rec_count;
+    CREATE(obj_proto, struct obj_data, (unsigned long)rec_count);
+    CREATE(obj_index, struct index_data, (unsigned long)rec_count);
+    size[0] = (int)sizeof(struct index_data) * (int)rec_count;
+    size[1] = (int)sizeof(struct obj_data) * (int)rec_count;
     log("   %d objs, %d bytes in index, %d bytes in prototypes.", rec_count, size[0], size[1]);
     break;
   case DB_BOOT_ZON:
-    CREATE(zone_table, struct zone_data, rec_count);
-    size[0] = sizeof(struct zone_data) * rec_count;
+    CREATE(zone_table, struct zone_data, (unsigned long)rec_count);
+    size[0] = (int)sizeof(struct zone_data) * (int)rec_count;
     log("   %d zones, %d bytes.", rec_count, size[0]);
     break;
   case DB_BOOT_HLP:
-    CREATE(help_table, struct help_index_element, rec_count);
-    size[0] = sizeof(struct help_index_element) * rec_count;
+    CREATE(help_table, struct help_index_element, (unsigned long)rec_count);
+    size[0] = (int)sizeof(struct help_index_element) * (int)rec_count;
     log("   %d entries, %d bytes.", rec_count, size[0]);
     break;
   }
@@ -812,7 +812,7 @@ void index_boot(int mode)
 
   /* sort the help index */
   if (mode == DB_BOOT_HLP) {
-    qsort(help_table, top_of_helpt, sizeof(struct help_index_element), hsort);
+    qsort(help_table, (size_t)top_of_helpt, sizeof(struct help_index_element), hsort);
     top_of_helpt--;
   }
 }
@@ -891,7 +891,7 @@ bitvector_t asciiflag_conv(char *flag)
   }
 
   if (is_num)
-    flags = atol(flag);
+    flags = (bitvector_t)atol(flag);
 
   return (flags);
 }
@@ -917,8 +917,8 @@ void parse_room(FILE *fl, int virtual_nr)
       log("SYSERR: Room %d is outside of any zone.", virtual_nr);
       exit(1);
     }
-  world[room_nr].zone = zone;
-  world[room_nr].number = virtual_nr;
+  world[room_nr].zone = (zone_rnum)zone;
+  world[room_nr].number = (room_vnum)virtual_nr;
   world[room_nr].name = fread_string(fl, buf2);
   world[room_nr].description = fread_string(fl, buf2);
 
@@ -935,9 +935,9 @@ void parse_room(FILE *fl, int virtual_nr)
   }
   /* t[0] is the zone number; ignored with the zone-file system */
 
-  world[room_nr].room_flags = asciiflag_conv(flags);
+  world[room_nr].room_flags = (int)asciiflag_conv(flags);
   sprintf(flags, "object #%d", virtual_nr);	/* sprintf: OK (until 399-bit integers) */
-  check_bitvector_names(world[room_nr].room_flags, room_bits_count, flags, "room");
+  check_bitvector_names((bitvector_t)world[room_nr].room_flags, room_bits_count, flags, "room");
 
   world[room_nr].sector_type = t[2];
 
@@ -970,7 +970,7 @@ void parse_room(FILE *fl, int virtual_nr)
       world[room_nr].ex_description = new_descr;
       break;
     case 'S':			/* end of room */
-      top_of_world = room_nr++;
+      top_of_world = (room_rnum)room_nr++;
       return;
     default:
       log("%s", buf);
@@ -1008,8 +1008,8 @@ void setup_dir(FILE *fl, int room, int dir)
   else
     world[room].dir_option[dir]->exit_info = 0;
 
-  world[room].dir_option[dir]->key = t[1];
-  world[room].dir_option[dir]->to_room = t[2];
+  world[room].dir_option[dir]->key = (obj_vnum)t[1];
+  world[room].dir_option[dir]->to_room = (room_rnum)t[2];
 }
 
 
@@ -1070,35 +1070,35 @@ void renum_zone_table(void)
   for (zone = 0; zone <= top_of_zone_table; zone++)
     for (cmd_no = 0; ZCMD.command != 'S'; cmd_no++) {
       a = b = c = 0;
-      olda = ZCMD.arg1;
-      oldb = ZCMD.arg2;
-      oldc = ZCMD.arg3;
+      olda = (room_vnum)ZCMD.arg1;
+      oldb = (room_vnum)ZCMD.arg2;
+      oldc = (room_vnum)ZCMD.arg3;
       switch (ZCMD.command) {
       case 'M':
-	a = ZCMD.arg1 = real_mobile(ZCMD.arg1);
-	c = ZCMD.arg3 = real_room(ZCMD.arg3);
+	a = ZCMD.arg1 = real_mobile((mob_vnum)ZCMD.arg1);
+	c = ZCMD.arg3 = real_room((room_vnum)ZCMD.arg3);
 	break;
       case 'O':
-	a = ZCMD.arg1 = real_object(ZCMD.arg1);
+	a = ZCMD.arg1 = real_object((obj_vnum)ZCMD.arg1);
 	if (ZCMD.arg3 != NOWHERE)
-	  c = ZCMD.arg3 = real_room(ZCMD.arg3);
+	  c = ZCMD.arg3 = real_room((room_vnum)ZCMD.arg3);
 	break;
       case 'G':
-	a = ZCMD.arg1 = real_object(ZCMD.arg1);
+	a = ZCMD.arg1 = real_object((obj_vnum)ZCMD.arg1);
 	break;
       case 'E':
-	a = ZCMD.arg1 = real_object(ZCMD.arg1);
+	a = ZCMD.arg1 = real_object((obj_vnum)ZCMD.arg1);
 	break;
       case 'P':
-	a = ZCMD.arg1 = real_object(ZCMD.arg1);
-	c = ZCMD.arg3 = real_object(ZCMD.arg3);
+	a = ZCMD.arg1 = real_object((obj_vnum)ZCMD.arg1);
+	c = ZCMD.arg3 = real_object((obj_vnum)ZCMD.arg3);
 	break;
       case 'D':
-	a = ZCMD.arg1 = real_room(ZCMD.arg1);
+	a = ZCMD.arg1 = real_room((room_vnum)ZCMD.arg1);
 	break;
       case 'R': /* rem obj from room */
-        a = ZCMD.arg1 = real_room(ZCMD.arg1);
-	b = ZCMD.arg2 = real_object(ZCMD.arg2);
+        a = ZCMD.arg1 = real_room((room_vnum)ZCMD.arg1);
+	b = ZCMD.arg2 = real_object((obj_vnum)ZCMD.arg2);
         break;
       }
       if (a == NOWHERE || b == NOWHERE || c == NOWHERE) {
@@ -1138,22 +1138,22 @@ void parse_simple_mob(FILE *mob_f, int i, int nr)
     exit(1);
   }
 
-  GET_LEVEL(mob_proto + i) = t[0];
-  GET_HITROLL(mob_proto + i) = 20 - t[1];
-  GET_AC(mob_proto + i) = 10 * t[2];
+  GET_LEVEL(mob_proto + i) = (byte)t[0];
+  GET_HITROLL(mob_proto + i) = (sbyte)20 - (sbyte)t[1];
+  GET_AC(mob_proto + i) = 10 * (sh_int)t[2];
 
   /* max hit = 0 is a flag that H, M, V is xdy+z */
   GET_MAX_HIT(mob_proto + i) = 0;
-  GET_HIT(mob_proto + i) = t[3];
-  GET_MANA(mob_proto + i) = t[4];
-  GET_MOVE(mob_proto + i) = t[5];
+  GET_HIT(mob_proto + i) = (sh_int)t[3];
+  GET_MANA(mob_proto + i) = (sh_int)t[4];
+  GET_MOVE(mob_proto + i) = (sh_int)t[5];
 
   GET_MAX_MANA(mob_proto + i) = 10;
   GET_MAX_MOVE(mob_proto + i) = 50;
 
-  mob_proto[i].mob_specials.damnodice = t[6];
-  mob_proto[i].mob_specials.damsizedice = t[7];
-  GET_DAMROLL(mob_proto + i) = t[8];
+  mob_proto[i].mob_specials.damnodice = (byte)t[6];
+  mob_proto[i].mob_specials.damsizedice = (byte)t[7];
+  GET_DAMROLL(mob_proto + i) = (sbyte)t[8];
 
   if (!get_line(mob_f, line)) {
       log("SYSERR: Format error in mob #%d, second line after S flag\n"
@@ -1182,9 +1182,9 @@ void parse_simple_mob(FILE *mob_f, int i, int nr)
     exit(1);
   }
 
-  GET_POS(mob_proto + i) = t[0];
-  GET_DEFAULT_POS(mob_proto + i) = t[1];
-  GET_SEX(mob_proto + i) = t[2];
+  GET_POS(mob_proto + i) = (byte)t[0];
+  GET_DEFAULT_POS(mob_proto + i) = (byte)t[1];
+  GET_SEX(mob_proto + i) = (byte)t[2];
 
   GET_CLASS(mob_proto + i) = 0;
   GET_WEIGHT(mob_proto + i) = 200;
@@ -1231,42 +1231,42 @@ void interpret_espec(const char *keyword, const char *value, int i, int nr)
 
   CASE("BareHandAttack") {
     RANGE(0, 99);
-    mob_proto[i].mob_specials.attack_type = num_arg;
+    mob_proto[i].mob_specials.attack_type = (sbyte)num_arg;
   }
 
   CASE("Str") {
     RANGE(3, 25);
-    mob_proto[i].real_abils.str = num_arg;
+    mob_proto[i].real_abils.str = (sbyte)num_arg;
   }
 
   CASE("StrAdd") {
     RANGE(0, 100);
-    mob_proto[i].real_abils.str_add = num_arg;    
+    mob_proto[i].real_abils.str_add = (sbyte)num_arg;
   }
 
   CASE("Int") {
     RANGE(3, 25);
-    mob_proto[i].real_abils.intel = num_arg;
+    mob_proto[i].real_abils.intel = (sbyte)num_arg;
   }
 
   CASE("Wis") {
     RANGE(3, 25);
-    mob_proto[i].real_abils.wis = num_arg;
+    mob_proto[i].real_abils.wis = (sbyte)num_arg;
   }
 
   CASE("Dex") {
     RANGE(3, 25);
-    mob_proto[i].real_abils.dex = num_arg;
+    mob_proto[i].real_abils.dex = (sbyte)num_arg;
   }
 
   CASE("Con") {
     RANGE(3, 25);
-    mob_proto[i].real_abils.con = num_arg;
+    mob_proto[i].real_abils.con = (sbyte)num_arg;
   }
 
   CASE("Cha") {
     RANGE(3, 25);
-    mob_proto[i].real_abils.cha = num_arg;
+    mob_proto[i].real_abils.cha = (sbyte)num_arg;
   }
 
   if (!matched) {
@@ -1320,7 +1320,7 @@ void parse_mobile(FILE *mob_f, int nr)
   char line[READ_SIZE], *tmpptr, letter;
   char f1[128], f2[128], buf2[128];
 
-  mob_index[i].vnum = nr;
+  mob_index[i].vnum = (mob_vnum)nr;
   mob_index[i].number = 0;
   mob_index[i].func = NULL;
 
@@ -1362,17 +1362,17 @@ void parse_mobile(FILE *mob_f, int nr)
     exit(1);
   }
 
-  MOB_FLAGS(mob_proto + i) = asciiflag_conv(f1);
+  MOB_FLAGS(mob_proto + i) = (long)asciiflag_conv(f1);
   SET_BIT(MOB_FLAGS(mob_proto + i), MOB_ISNPC);
   if (MOB_FLAGGED(mob_proto + i, MOB_NOTDEADYET)) {
     /* Rather bad to load mobiles with this bit already set. */
     log("SYSERR: Mob #%d has reserved bit MOB_NOTDEADYET set.", nr);
     REMOVE_BIT(MOB_FLAGS(mob_proto + i), MOB_NOTDEADYET);
   }
-  check_bitvector_names(MOB_FLAGS(mob_proto + i), action_bits_count, buf2, "mobile");
+  check_bitvector_names((bitvector_t)MOB_FLAGS(mob_proto + i), action_bits_count, buf2, "mobile");
 
-  AFF_FLAGS(mob_proto + i) = asciiflag_conv(f2);
-  check_bitvector_names(AFF_FLAGS(mob_proto + i), affected_bits_count, buf2, "mobile affect");
+  AFF_FLAGS(mob_proto + i) = (long)asciiflag_conv(f2);
+  check_bitvector_names((bitvector_t)(mob_proto + i), affected_bits_count, buf2, "mobile affect");
 
   GET_ALIGNMENT(mob_proto + i) = t[2];
 
@@ -1398,10 +1398,10 @@ void parse_mobile(FILE *mob_f, int nr)
   for (j = 0; j < NUM_WEARS; j++)
     mob_proto[i].equipment[j] = NULL;
 
-  mob_proto[i].nr = i;
+  mob_proto[i].nr = (mob_rnum)i;
   mob_proto[i].desc = NULL;
 
-  top_of_mobt = i++;
+  top_of_mobt = (mob_rnum)i++;
 }
 
 
@@ -1417,12 +1417,12 @@ char *parse_object(FILE *obj_f, int nr)
   char f1[READ_SIZE], f2[READ_SIZE], buf2[128];
   struct extra_descr_data *new_descr;
 
-  obj_index[i].vnum = nr;
+  obj_index[i].vnum = (mob_vnum)nr;
   obj_index[i].number = 0;
   obj_index[i].func = NULL;
 
   clear_object(obj_proto + i);
-  obj_proto[i].item_number = i;
+  obj_proto[i].item_number = (obj_vnum)i;
 
   sprintf(buf2, "object #%d", nr);	/* sprintf: OK (for 'buf2 >= 19') */
 
@@ -1453,9 +1453,9 @@ char *parse_object(FILE *obj_f, int nr)
   }
 
   /* Object flags checked in check_object(). */
-  GET_OBJ_TYPE(obj_proto + i) = t[0];
-  GET_OBJ_EXTRA(obj_proto + i) = asciiflag_conv(f1);
-  GET_OBJ_WEAR(obj_proto + i) = asciiflag_conv(f2);
+  GET_OBJ_TYPE(obj_proto + i) = (byte)t[0];
+  GET_OBJ_EXTRA(obj_proto + i) = (int)asciiflag_conv(f1);
+  GET_OBJ_WEAR(obj_proto + i) = (int)asciiflag_conv(f2);
 
   if (!get_line(obj_f, line)) {
     log("SYSERR: Expecting second numeric line of %s, but file ended!", buf2);
@@ -1529,14 +1529,14 @@ char *parse_object(FILE *obj_f, int nr)
 	    "...offending line: '%s'", buf2, retval, line);
 	exit(1);
       }
-      obj_proto[i].affected[j].location = t[0];
-      obj_proto[i].affected[j].modifier = t[1];
+      obj_proto[i].affected[j].location = (byte)t[0];
+      obj_proto[i].affected[j].modifier = (sbyte)t[1];
       j++;
       break;
     case '$':
     case '#':
       check_object(obj_proto + i);
-      top_of_objt = i++;
+      top_of_objt = (obj_rnum)i++;
       return (line);
     default:
       log("SYSERR: Format error in (%c): %s", *line, buf2);
@@ -1575,7 +1575,7 @@ void load_zones(FILE *fl, char *zonename)
     log("SYSERR: %s is empty!", zname);
     exit(1);
   } else
-    CREATE(Z.cmd, struct reset_com, num_of_cmds);
+    CREATE(Z.cmd, struct reset_com, (unsigned long)num_of_cmds);
 
   line_num += get_line(fl, buf);
 
@@ -1630,7 +1630,7 @@ void load_zones(FILE *fl, char *zonename)
 	error = 1;
     }
 
-    ZCMD.if_flag = tmp;
+    ZCMD.if_flag = (bool)tmp;
 
     if (error) {
       log("SYSERR: Format error in %s, line %d: '%s'", zname, line_num, buf);
@@ -1717,7 +1717,7 @@ void load_help(FILE *fl)
 
       strcpy(entry + sizeof(entry) - strlen(truncmsg) - 1, truncmsg);	/* strcpy: OK (assuming sane 'entry' size) */
 
-      keysize = strlen(key) - 2;
+      keysize = (int)strlen(key) - 2;
       log("SYSERR: Help entry exceeded buffer space: %.*s", keysize, key);
 
       /* If we ran out of buffer space, eat the rest of the entry. */
@@ -1818,10 +1818,10 @@ struct char_data *read_mobile(mob_vnum nr, int type) /* and mob_rnum */
   character_list = mob;
 
   if (!mob->points.max_hit) {
-    mob->points.max_hit = dice(mob->points.hit, mob->points.mana) +
+    mob->points.max_hit = (sh_int)dice(mob->points.hit, mob->points.mana) +
       mob->points.move;
   } else
-    mob->points.max_hit = rand_number(mob->points.hit, mob->points.mana);
+    mob->points.max_hit = (sh_int)rand_number(mob->points.hit, mob->points.mana);
 
   mob->points.hit = mob->points.max_hit;
   mob->points.mana = mob->points.max_mana;
@@ -1906,7 +1906,7 @@ void zone_update(void)
 
 	CREATE(update_u, struct reset_q_element, 1);
 
-	update_u->zone_to_reset = i;
+	update_u->zone_to_reset = (zone_rnum)i;
 	update_u->next = 0;
 
 	if (!reset_q.head)
@@ -1981,8 +1981,8 @@ void reset_zone(zone_rnum zone)
 
     case 'M':			/* read a mobile */
       if (mob_index[ZCMD.arg1].number < ZCMD.arg2) {
-	mob = read_mobile(ZCMD.arg1, REAL);
-	char_to_room(mob, ZCMD.arg3);
+	mob = read_mobile((mob_vnum)ZCMD.arg1, REAL);
+	char_to_room(mob, (room_rnum)ZCMD.arg3);
 	last_cmd = 1;
       } else
 	last_cmd = 0;
@@ -1991,11 +1991,11 @@ void reset_zone(zone_rnum zone)
     case 'O':			/* read an object */
       if (obj_index[ZCMD.arg1].number < ZCMD.arg2) {
 	if (ZCMD.arg3 != NOWHERE) {
-	  obj = read_object(ZCMD.arg1, REAL);
-	  obj_to_room(obj, ZCMD.arg3);
+	  obj = read_object((obj_vnum)ZCMD.arg1, REAL);
+	  obj_to_room(obj, (room_rnum)ZCMD.arg3);
 	  last_cmd = 1;
 	} else {
-	  obj = read_object(ZCMD.arg1, REAL);
+	  obj = read_object((obj_vnum)ZCMD.arg1, REAL);
 	  IN_ROOM(obj) = NOWHERE;
 	  last_cmd = 1;
 	}
@@ -2005,8 +2005,8 @@ void reset_zone(zone_rnum zone)
 
     case 'P':			/* object to object */
       if (obj_index[ZCMD.arg1].number < ZCMD.arg2) {
-	obj = read_object(ZCMD.arg1, REAL);
-	if (!(obj_to = get_obj_num(ZCMD.arg3))) {
+	obj = read_object((obj_vnum)ZCMD.arg1, REAL);
+	if (!(obj_to = get_obj_num((obj_vnum)ZCMD.arg3))) {
 	  ZONE_ERROR("target obj not found, command disabled");
 	  ZCMD.command = '*';
 	  break;
@@ -2024,7 +2024,7 @@ void reset_zone(zone_rnum zone)
 	break;
       }
       if (obj_index[ZCMD.arg1].number < ZCMD.arg2) {
-	obj = read_object(ZCMD.arg1, REAL);
+	obj = read_object((obj_vnum)ZCMD.arg1, REAL);
 	obj_to_char(obj, mob);
 	last_cmd = 1;
       } else
@@ -2041,7 +2041,7 @@ void reset_zone(zone_rnum zone)
 	if (ZCMD.arg3 < 0 || ZCMD.arg3 >= NUM_WEARS) {
 	  ZONE_ERROR("invalid equipment pos number");
 	} else {
-	  obj = read_object(ZCMD.arg1, REAL);
+	  obj = read_object((obj_vnum)ZCMD.arg1, REAL);
 	  equip_char(mob, obj, ZCMD.arg3);
 	  last_cmd = 1;
 	}
@@ -2168,8 +2168,8 @@ int load_char(const char *name, struct char_file_u *char_element)
 {
   int player_i;
 
-  if ((player_i = get_ptable_by_name(name)) >= 0) {
-    fseek(player_fl, player_i * sizeof(struct char_file_u), SEEK_SET);
+  if ((player_i = (int)get_ptable_by_name(name)) >= 0) {
+    fseek(player_fl, (long)player_i * (long)sizeof(struct char_file_u), SEEK_SET);
     fread(char_element, sizeof(struct char_file_u), 1, player_fl);
     return (player_i);
   } else
@@ -2198,7 +2198,7 @@ void save_char(struct char_data *ch)
   strncpy(st.host, ch->desc->host, HOST_LENGTH);	/* strncpy: OK (s.host:HOST_LENGTH+1) */
   st.host[HOST_LENGTH] = '\0';
 
-  fseek(player_fl, GET_PFILEPOS(ch) * sizeof(struct char_file_u), SEEK_SET);
+  fseek(player_fl, (long)GET_PFILEPOS(ch) * (long)sizeof(struct char_file_u), SEEK_SET);
   fwrite(&st, sizeof(struct char_file_u), 1, player_fl);
 }
 
@@ -2396,10 +2396,10 @@ int create_entry(char *name)
   if (top_of_p_table == -1) {	/* no table */
     CREATE(player_table, struct player_index_element, 1);
     pos = top_of_p_table = 0;
-  } else if ((pos = get_ptable_by_name(name)) == -1) {	/* new name */
+  } else if ((pos = (int)get_ptable_by_name(name)) == -1) {	/* new name */
     i = ++top_of_p_table + 1;
 
-    RECREATE(player_table, struct player_index_element, i);
+    RECREATE(player_table, struct player_index_element, (unsigned long)i);
     pos = top_of_p_table;
   }
 
@@ -2444,7 +2444,7 @@ char *fread_string(FILE *fl, const char *error)
       *point = '\0';
     }
 
-    templength = strlen(tmp);
+    templength = (int)strlen(tmp);
 
     if (length + templength >= MAX_STRING_LENGTH) {
       log("SYSERR: fread_string: string too large (db.c)");
@@ -2617,7 +2617,7 @@ int file_to_string(const char *name, char *buf)
   for (;;) {
     if (!fgets(tmp, READ_SIZE, fl))	/* EOF check */
       break;
-    if ((len = strlen(tmp)) > 0)
+    if ((len = (int)strlen(tmp)) > 0)
       tmp[len - 1] = '\0'; /* take off the trailing \n */
     strcat(tmp, "\r\n");	/* strcat: OK (tmp:READ_SIZE+3) */
 
@@ -2750,14 +2750,14 @@ void init_char(struct char_data *ch)
    * ever printed (in stock code) is SPELL_IDENTIFY.
    */
   if (GET_SEX(ch) == SEX_MALE) {
-    GET_WEIGHT(ch) = rand_number(120, 180);
-    GET_HEIGHT(ch) = rand_number(160, 200); /* 5'4" - 6'8" */
+    GET_WEIGHT(ch) = (ubyte)rand_number(120, 180);
+    GET_HEIGHT(ch) = (ubyte)rand_number(160, 200); /* 5'4" - 6'8" */
   } else {
-    GET_WEIGHT(ch) = rand_number(100, 160);
-    GET_HEIGHT(ch) = rand_number(150, 180); /* 5'0" - 6'0" */
+    GET_WEIGHT(ch) = (ubyte)rand_number(100, 160);
+    GET_HEIGHT(ch) = (ubyte)rand_number(150, 180); /* 5'0" - 6'0" */
   }
 
-  if ((i = get_ptable_by_name(GET_NAME(ch))) != -1)
+  if ((i = (int)get_ptable_by_name(GET_NAME(ch))) != -1)
     player_table[i].id = GET_IDNUM(ch) = ++top_idnum;
   else
     log("SYSERR: init_char: Character '%s' not found in player table.", GET_NAME(ch));
@@ -2906,9 +2906,9 @@ int check_object(struct obj_data *obj)
 	GET_OBJ_VNUM(obj), obj->short_description, GET_OBJ_RENT(obj));
 
   snprintf(objname, sizeof(objname), "Object #%d (%s)", GET_OBJ_VNUM(obj), obj->short_description);
-  error |= check_bitvector_names(GET_OBJ_WEAR(obj), wear_bits_count, objname, "object wear");
-  error |= check_bitvector_names(GET_OBJ_EXTRA(obj), extra_bits_count, objname, "object extra");
-  error |= check_bitvector_names(GET_OBJ_AFFECT(obj), affected_bits_count, objname, "object affect");
+  error |= check_bitvector_names((bitvector_t)GET_OBJ_WEAR(obj), wear_bits_count, objname, "object wear");
+  error |= check_bitvector_names((bitvector_t)GET_OBJ_EXTRA(obj), extra_bits_count, objname, "object extra");
+  error |= check_bitvector_names((bitvector_t)GET_OBJ_AFFECT(obj), affected_bits_count, objname, "object affect");
 
   switch (GET_OBJ_TYPE(obj)) {
   case ITEM_DRINKCON:
@@ -3016,7 +3016,7 @@ int check_bitvector_names(bitvector_t bits, size_t namecount, const char *whatam
   if (bits <= (~(bitvector_t)0 >> (sizeof(bitvector_t) * 8 - namecount)))
     return (FALSE);
 
-  for (flagnum = namecount; flagnum < sizeof(bitvector_t) * 8; flagnum++)
+  for (flagnum = (unsigned int)namecount; flagnum < sizeof(bitvector_t) * 8; flagnum++)
     if ((1 << flagnum) & bits) {
       log("SYSERR: %s has unknown %s flag, bit %d (0 through %d known).", whatami, whatbits, flagnum, namecount - 1);
       error = TRUE;

@@ -251,7 +251,7 @@ int evaluate_expression(struct obj_data *obj, char *expr)
 	end = ptr;
 	while (*ptr && !isspace(*ptr) && find_oper_num(*ptr) == NOTHING)
 	  ptr++;
-	strncpy(name, end, ptr - end);	/* strncpy: OK (name/end:MAX_STRING_LENGTH) */
+	strncpy(name, end, (unsigned long)ptr - (unsigned long)end);	/* strncpy: OK (name/end:MAX_STRING_LENGTH) */
 	name[ptr - end] = '\0';
 	for (eindex = 0; *extra_bits[eindex] != '\n'; eindex++)
 	  if (!str_cmp(name, extra_bits[eindex])) {
@@ -382,7 +382,7 @@ char *times_message(struct obj_data *obj, char *name, int num)
       ptr = name;
     else
       ptr++;
-    len = snprintf(buf, sizeof(buf), "%s %s", AN(ptr), ptr);
+    len = (size_t)snprintf(buf, sizeof(buf), "%s %s", AN(ptr), ptr);
   }
 
   if (num > 1 && len < sizeof(buf))
@@ -494,7 +494,7 @@ struct obj_data *get_purchase_obj(struct char_data *ch, char *arg,
  */
 int buy_price(struct obj_data *obj, int shop_nr, struct char_data *keeper, struct char_data *buyer)
 {
-  return (int) (GET_OBJ_COST(obj) * SHOP_BUYPROFIT(shop_nr)
+  return (int) ((float)GET_OBJ_COST(obj) * SHOP_BUYPROFIT(shop_nr)
 	* (1 + (GET_CHA(keeper) - GET_CHA(buyer)) / (float)70));
 }
 
@@ -510,7 +510,7 @@ int sell_price(struct obj_data *obj, int shop_nr, struct char_data *keeper, stru
   if (sell_cost_modifier > buy_cost_modifier)
     sell_cost_modifier = buy_cost_modifier;
 
-  return (int) (GET_OBJ_COST(obj) * sell_cost_modifier);
+  return (int) ((float)GET_OBJ_COST(obj) * sell_cost_modifier);
 }
 
 
@@ -1022,7 +1022,7 @@ int add_to_list(struct shop_buy_data *list, int type, int *len, int *val)
   if (*val != NOTHING) {
     if (*len < MAX_SHOP_OBJ) {
       if (type == LIST_PRODUCE)
-	*val = real_object(*val);
+	*val = real_object((obj_vnum)*val);
       if (*val != NOTHING) {
 	BUY_TYPE(list[*len]) = *val;
 	BUY_WORD(list[(*len)++]) = NULL;
@@ -1182,18 +1182,18 @@ void boot_the_shops(FILE *shop_f, char *filename, int rec_count)
       free(buf);		/* Plug memory leak! */
       top_shop++;
       if (!top_shop)
-	CREATE(shop_index, struct shop_data, rec_count);
-      SHOP_NUM(top_shop) = temp;
+	CREATE(shop_index, struct shop_data, (unsigned long)rec_count);
+      SHOP_NUM(top_shop) = (room_vnum)temp;
       temp = read_list(shop_f, list, new_format, MAX_PROD, LIST_PRODUCE);
-      CREATE(shop_index[top_shop].producing, obj_vnum, temp);
+      CREATE(shop_index[top_shop].producing, obj_vnum, (unsigned long)temp);
       for (count = 0; count < temp; count++)
-	SHOP_PRODUCT(top_shop, count) = BUY_TYPE(list[count]);
+	SHOP_PRODUCT(top_shop, count) = (obj_vnum)BUY_TYPE(list[count]);
 
       read_line(shop_f, "%f", &SHOP_BUYPROFIT(top_shop));
       read_line(shop_f, "%f", &SHOP_SELLPROFIT(top_shop));
 
       temp = read_type_list(shop_f, list, new_format, MAX_TRADE);
-      CREATE(shop_index[top_shop].type, struct shop_buy_data, temp);
+      CREATE(shop_index[top_shop].type, struct shop_buy_data, (unsigned long)temp);
       for (count = 0; count < temp; count++) {
 	SHOP_BUYTYPE(top_shop, count) = BUY_TYPE(list[count]);
 	SHOP_BUYWORD(top_shop, count) = BUY_WORD(list[count]);
@@ -1214,9 +1214,9 @@ void boot_the_shops(FILE *shop_f, char *filename, int rec_count)
       read_line(shop_f, "%d", &SHOP_TRADE_WITH(top_shop));
 
       temp = read_list(shop_f, list, new_format, 1, LIST_ROOM);
-      CREATE(shop_index[top_shop].in_room, room_vnum, temp);
+      CREATE(shop_index[top_shop].in_room, room_vnum, (unsigned long)temp);
       for (count = 0; count < temp; count++)
-	SHOP_ROOM(top_shop, count) = BUY_TYPE(list[count]);
+	SHOP_ROOM(top_shop, count) = (room_vnum)BUY_TYPE(list[count]);
 
       read_line(shop_f, "%d", &SHOP_OPEN1(top_shop));
       read_line(shop_f, "%d", &SHOP_CLOSE1(top_shop));
@@ -1271,10 +1271,10 @@ char *customer_string(int shop_nr, int detailed)
       if (!IS_SET(flag, SHOP_TRADE_WITH(shop_nr))) {
 	nlen = snprintf(buf + len, sizeof(buf) - len, ", %s", trade_letters[sindex]);
 
-        if (len + nlen >= sizeof(buf) || nlen < 0)
+        if (len + (unsigned long)nlen >= sizeof(buf) || nlen < 0)
           break;
 
-        len += nlen;
+        len += (unsigned long)nlen;
       }
     } else {
       buf[len++] = (IS_SET(flag, SHOP_TRADE_WITH(shop_nr)) ? '_' : *trade_letters[sindex]);
@@ -1299,7 +1299,7 @@ void list_all_shops(struct char_data *ch)
   const char *list_all_shops_header =
 	" ##   Virtual   Where    Keeper    Buy   Sell   Customers\r\n"
 	"---------------------------------------------------------\r\n";
-  int shop_nr, headerlen = strlen(list_all_shops_header);
+  int shop_nr, headerlen = (int)strlen(list_all_shops_header);
   size_t len = 0;
   char buf[MAX_STRING_LENGTH], buf1[16];
 
@@ -1311,10 +1311,10 @@ void list_all_shops(struct char_data *ch)
        * If we don't have enough room for the header, or all we have room left
        * for is the header, then don't add it and just quit now.
        */
-      if (len + headerlen + 1 >= sizeof(buf))
+      if (len + (unsigned long)headerlen + 1 >= sizeof(buf))
         break;
       strcpy(buf + len, list_all_shops_header);	/* strcpy: OK (length checked above) */
-      len += headerlen;
+      len += (unsigned long)headerlen;
     }
 
     if (SHOP_KEEPER(shop_nr) == NOBODY)
@@ -1322,7 +1322,7 @@ void list_all_shops(struct char_data *ch)
     else
       sprintf(buf1, "%6d", mob_index[SHOP_KEEPER(shop_nr)].vnum);	/* sprintf: OK (for 'buf1 >= 11', 32-bit int) */
 
-    len += snprintf(buf + len, sizeof(buf) - len,
+    len += (unsigned long)snprintf(buf + len, sizeof(buf) - len,
                "%3d   %6d   %6d    %s   %3.2f   %3.2f    %s\r\n",
 	       shop_nr + 1, SHOP_NUM(shop_nr), SHOP_ROOM(shop_nr, 0), buf1,
 	       SHOP_SELLPROFIT(shop_nr), SHOP_BUYPROFIT(shop_nr),
@@ -1428,13 +1428,13 @@ void list_detailed_shop(struct char_data *ch, int shop_nr)
       column += 2;
     }
 
-    linelen = snprintf(buf1, sizeof(buf1), "%s (#%d) [%s]",
+    linelen = (size_t)snprintf(buf1, sizeof(buf1), "%s (#%d) [%s]",
 		item_types[SHOP_BUYTYPE(shop_nr, sindex)],
 		SHOP_BUYTYPE(shop_nr, sindex),
 		SHOP_BUYWORD(shop_nr, sindex) ? SHOP_BUYWORD(shop_nr, sindex) : "all");
 
     /* Implementing word-wrapping: assumes screen-size == 80 */
-    if (linelen + column >= 78 && column >= 20) {
+    if (linelen + (unsigned long)column >= 78 && column >= 20) {
       send_to_char(ch, "\r\n            ");
       /* 12 is to line up with "Buys:" printed first, and spaces above. */
       column = 12;

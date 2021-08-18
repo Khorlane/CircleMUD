@@ -106,7 +106,7 @@ ACMD(do_olc)
 	send_to_char(ch, "Invalid room vnum '%s'.\r\n", arg);
 	return;
       }
-      vnum = atoi(arg);
+      vnum = (room_vnum)atoi(arg);
       if ((rnum = real_room(vnum)) == NOWHERE) {
 	send_to_char(ch, "No such room!\r\n");
 	return;
@@ -129,7 +129,7 @@ ACMD(do_olc)
       send_to_char(ch, "Invalid mob vnum '%s'.\r\n", arg);
       return;
     }
-    vnum = atoi(arg);
+    vnum = (room_vnum)atoi(arg);
     if ((rnum = real_mobile(vnum)) == NOBODY)
       send_to_char(ch, "No such mobile vnum.\r\n");
     else
@@ -141,7 +141,7 @@ ACMD(do_olc)
       send_to_char(ch, "Invalid obj vnum '%s'\r\n", arg);
       return;
     }
-    vnum = atoi(arg);
+    vnum = (room_vnum)atoi(arg);
     if ((rnum = real_object(vnum)) == NOTHING)
       send_to_char(ch, "No object with vnum %d.\r\n", vnum);
     else
@@ -342,7 +342,7 @@ void olc_bitvector(int *bv, const char **names, char *arg)
   }
 
   *bv = newbv;
-  sprintbit(newbv, names, buf, sizeof(buf));
+  sprintbit((bitvector_t)newbv, names, buf, sizeof(buf));
   send_to_char(olc_ch, "Flags now set to: %s\r\n", buf);
 }
 

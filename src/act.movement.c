@@ -332,7 +332,7 @@ void do_doorcmd(struct char_data *ch, struct obj_data *obj, int door, int scmd)
   room_rnum other_room = NOWHERE;
   struct room_direction_data *back = NULL;
 
-  len = snprintf(buf, sizeof(buf), "$n %ss ", cmd_door[scmd]);
+  len = (size_t)snprintf(buf, sizeof(buf), "$n %ss ", cmd_door[scmd]);
   if (!obj && ((other_room = EXIT(ch, door)->to_room) != NOWHERE))
     if ((back = world[other_room].dir_option[rev_dir[door]]) != NULL)
       if (back->to_room != IN_ROOM(ch))
@@ -451,7 +451,7 @@ ACMD(do_gen_door)
     door = find_door(ch, type, dir, cmd_door[subcmd]);
 
   if ((obj) || (door >= 0)) {
-    keynum = DOOR_KEY(ch, obj, door);
+    keynum = (obj_vnum)DOOR_KEY(ch, obj, door);
     if (!(DOOR_IS_OPENABLE(ch, obj, door)))
       act("You can't $F that!", FALSE, ch, 0, cmd_door[subcmd], TO_CHAR);
     else if (!DOOR_IS_OPEN(ch, obj, door) &&

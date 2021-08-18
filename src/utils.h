@@ -153,7 +153,7 @@ void	update_pos(struct char_data *victim);
 #define CREATE(result, type, number)  do {\
 	if ((number) * sizeof(type) <= 0)	\
 		log("SYSERR: Zero bytes or less requested at %s:%d.", __FILE__, __LINE__);	\
-	if (!((result) = (type *) calloc ((number), sizeof(type))))	\
+	if (!((result) = (type *) calloc (((unsigned long)number), sizeof(type))))	\
 		{ perror("SYSERR: malloc failure"); abort(); } } while(0)
 
 #define RECREATE(result,type,number) do {\

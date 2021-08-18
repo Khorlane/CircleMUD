@@ -89,7 +89,7 @@ ASPELL(spell_teleport)
     return;
 
   do {
-    to_room = rand_number(0, top_of_world);
+    to_room = (room_rnum)rand_number(0, top_of_world);
   } while (ROOM_FLAGGED(to_room, ROOM_PRIVATE | ROOM_DEATH | ROOM_GODROOM));
 
   act("$n slowly fades out of existence and is gone.",
@@ -256,11 +256,11 @@ ASPELL(spell_identify)
     send_to_char(ch, "You feel informed:\r\nObject '%s', Item type: %s\r\n", obj->short_description, bitbuf);
 
     if (GET_OBJ_AFFECT(obj)) {
-      sprintbit(GET_OBJ_AFFECT(obj), affected_bits, bitbuf, sizeof(bitbuf));
+      sprintbit((bitvector_t)GET_OBJ_AFFECT(obj), affected_bits, bitbuf, sizeof(bitbuf));
       send_to_char(ch, "Item will give you following abilities:  %s\r\n", bitbuf);
     }
 
-    sprintbit(GET_OBJ_EXTRA(obj), extra_bits, bitbuf, sizeof(bitbuf));
+    sprintbit((bitvector_t)GET_OBJ_EXTRA(obj), extra_bits, bitbuf, sizeof(bitbuf));
     send_to_char(ch, "Item is: %s\r\n", bitbuf);
 
     send_to_char(ch, "Weight: %d, Value: %d, Rent: %d\r\n", GET_OBJ_WEIGHT(obj), GET_OBJ_COST(obj), GET_OBJ_RENT(obj));
@@ -273,19 +273,19 @@ ASPELL(spell_identify)
       if (GET_OBJ_VAL(obj, 1) >= 1) {
 	i = snprintf(bitbuf + len, sizeof(bitbuf) - len, " %s", skill_name(GET_OBJ_VAL(obj, 1)));
         if (i >= 0)
-          len += i;
+          len += (size_t)i;
       }
 
       if (GET_OBJ_VAL(obj, 2) >= 1 && len < sizeof(bitbuf)) {
 	i = snprintf(bitbuf + len, sizeof(bitbuf) - len, " %s", skill_name(GET_OBJ_VAL(obj, 2)));
         if (i >= 0)
-          len += i;
+          len += (size_t)i;
       }
 
       if (GET_OBJ_VAL(obj, 3) >= 1 && len < sizeof(bitbuf)) {
 	i = snprintf(bitbuf + len, sizeof(bitbuf) - len, " %s", skill_name(GET_OBJ_VAL(obj, 3)));
         if (i >= 0)
-          len += i;
+          len += (size_t)i;
       }
 
       send_to_char(ch, "This %s casts: %s\r\n", item_types[(int) GET_OBJ_TYPE(obj)], bitbuf);

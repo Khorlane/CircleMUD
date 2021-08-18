@@ -53,7 +53,7 @@ int rand_number(int from, int to)
    * deviation of both are identical (within the realm of statistical
    * identity) if the rand() implementation is non-broken.
    */
-  return ((circle_random() % (to - from + 1)) + from);
+  return ((int)(circle_random() % (unsigned int)(to - from + 1)) + from);
 }
 
 
@@ -130,7 +130,7 @@ char *strdup(const char *source)
  */
 void prune_crlf(char *txt)
 {
-  int i = strlen(txt) - 1;
+  int i = (int)strlen(txt) - 1;
 
   while (txt[i] == '\n' || txt[i] == '\r')
     txt[i--] = '\0';
@@ -306,9 +306,9 @@ size_t sprintbit(bitvector_t bitvector, const char *names[], char *result, size_
   for (nr = 0; bitvector && len < reslen; bitvector >>= 1) {
     if (IS_SET(bitvector, 1)) {
       nlen = snprintf(result + len, reslen - len, "%s ", *names[nr] != '\n' ? names[nr] : "UNDEFINED");
-      if (len + nlen >= reslen || nlen < 0)
+      if (len + (size_t)nlen >= reslen || nlen < 0)
         break;
-      len += nlen;
+      len += (size_t)nlen;
     }
 
     if (*names[nr] != '\n')
@@ -346,7 +346,7 @@ struct time_info_data *real_time_passed(time_t t2, time_t t1)
   now.hours = (secs / SECS_PER_REAL_HOUR) % 24;	/* 0..23 hours */
   secs -= SECS_PER_REAL_HOUR * now.hours;
 
-  now.day = (secs / SECS_PER_REAL_DAY);	/* 0..34 days  */
+  now.day = ((int)secs / SECS_PER_REAL_DAY);	/* 0..34 days  */
   /* secs -= SECS_PER_REAL_DAY * now.day; - Not used. */
 
   now.month = -1;
@@ -374,7 +374,7 @@ struct time_info_data *mud_time_passed(time_t t2, time_t t1)
   now.month = (secs / SECS_PER_MUD_MONTH) % 17;	/* 0..16 months */
   secs -= SECS_PER_MUD_MONTH * now.month;
 
-  now.year = (secs / SECS_PER_MUD_YEAR);	/* 0..XX? years */
+  now.year = ((sh_int) secs / SECS_PER_MUD_YEAR);	/* 0..XX? years */
 
   return (&now);
 }
@@ -537,7 +537,7 @@ int get_line(FILE *fl, char *buf)
   } while (*temp == '*' || *temp == '\n' || *temp == '\r');
 
   /* Last line of file doesn't always have a \n, but it should. */
-  sl = strlen(temp);
+  sl = (int)strlen(temp);
   while (sl > 0 && (temp[sl - 1] == '\n' || temp[sl - 1] == '\r'))
     temp[--sl] = '\0';
 

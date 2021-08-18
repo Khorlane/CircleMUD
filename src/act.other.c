@@ -155,7 +155,7 @@ ACMD(do_sneak)
   if (AFF_FLAGGED(ch, AFF_SNEAK))
     affect_from_char(ch, SKILL_SNEAK);
 
-  percent = rand_number(1, 101);	/* 101% is a complete failure */
+  percent = (byte)rand_number(1, 101);	/* 101% is a complete failure */
 
   if (percent > GET_SKILL(ch, SKILL_SNEAK) + dex_app_skill[GET_DEX(ch)].sneak)
     return;
@@ -184,7 +184,7 @@ ACMD(do_hide)
   if (AFF_FLAGGED(ch, AFF_HIDE))
     REMOVE_BIT(AFF_FLAGS(ch), AFF_HIDE);
 
-  percent = rand_number(1, 101);	/* 101% is a complete failure */
+  percent = (byte)rand_number(1, 101);	/* 101% is a complete failure */
 
   if (percent > GET_SKILL(ch, SKILL_HIDE) + dex_app_skill[GET_DEX(ch)].hide)
     return;
@@ -592,7 +592,7 @@ ACMD(do_split)
     GET_GOLD(ch) -= share * (num - 1);
 
     /* Abusing signed/unsigned to make sizeof work. */
-    len = snprintf(buf, sizeof(buf), "%s splits %d coins; you receive %d.\r\n",
+    len = (size_t)snprintf(buf, sizeof(buf), "%s splits %d coins; you receive %d.\r\n",
 		GET_NAME(ch), amount, share);
     if (rest && len < sizeof(buf)) {
       snprintf(buf + len, sizeof(buf) - len,

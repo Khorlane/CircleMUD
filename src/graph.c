@@ -70,7 +70,7 @@ void bfs_enqueue(room_rnum room, int dir)
 
   CREATE(curr, struct bfs_queue_struct, 1);
   curr->room = room;
-  curr->dir = dir;
+  curr->dir = (char)dir;
   curr->next = 0;
 
   if (queue_tail) {

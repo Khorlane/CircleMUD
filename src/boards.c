@@ -260,7 +260,7 @@ int Board_show_board(int board_type, struct char_data *ch, char *arg, struct obj
     size_t len = 0;
     int nlen;
 
-    len = snprintf(buf, sizeof(buf),
+    len = (size_t)snprintf(buf, sizeof(buf),
 		"This is a bulletin board.  Usage: READ/REMOVE <messg #>, WRITE <header>.\r\n"
 		"You will need to look at the board to save your message.\r\n"
 		"There are %d messages on the board.\r\n",
@@ -281,9 +281,9 @@ int Board_show_board(int board_type, struct char_data *ch, char *arg, struct obj
         goto fubar;
 
       nlen = snprintf(buf + len, sizeof(buf) - len, "%-2d : %s\r\n", i + 1, MSG_HEADING(board_type, i));
-      if (len + nlen >= sizeof(buf) || nlen < 0)
+      if (len + (unsigned long)nlen >= sizeof(buf) || nlen < 0)
         break;
-      len += nlen;
+      len += (unsigned long)nlen;
     }
 #endif
     page_string(ch->desc, buf, TRUE);
@@ -448,7 +448,7 @@ void Board_save_board(int board_type)
 
   for (i = 0; i < num_of_msgs[board_type]; i++) {
     if ((tmp1 = MSG_HEADING(board_type, i)) != NULL)
-      msg_index[board_type][i].heading_len = strlen(tmp1) + 1;
+      msg_index[board_type][i].heading_len = (int)strlen(tmp1) + 1;
     else
       msg_index[board_type][i].heading_len = 0;
 
@@ -457,13 +457,13 @@ void Board_save_board(int board_type)
 	(!(tmp2 = msg_storage[MSG_SLOTNUM(board_type, i)])))
       msg_index[board_type][i].message_len = 0;
     else
-      msg_index[board_type][i].message_len = strlen(tmp2) + 1;
+      msg_index[board_type][i].message_len = (int)strlen(tmp2) + 1;
 
     fwrite(&(msg_index[board_type][i]), sizeof(struct board_msginfo), 1, fl);
     if (tmp1)
-      fwrite(tmp1, sizeof(char), msg_index[board_type][i].heading_len, fl);
+      fwrite(tmp1, sizeof(char), (unsigned long)msg_index[board_type][i].heading_len, fl);
     if (tmp2)
-      fwrite(tmp2, sizeof(char), msg_index[board_type][i].message_len, fl);
+      fwrite(tmp2, sizeof(char), (unsigned long)msg_index[board_type][i].message_len, fl);
   }
 
   fclose(fl);
@@ -494,8 +494,8 @@ void Board_load_board(int board_type)
       Board_reset_board(board_type);
       return;
     }
-    CREATE(tmp1, char, len1);
-    fread(tmp1, sizeof(char), len1, fl);
+    CREATE(tmp1, char, (unsigned long)len1);
+    fread(tmp1, sizeof(char), (unsigned long)len1, fl);
     MSG_HEADING(board_type, i) = tmp1;
 
     if ((MSG_SLOTNUM(board_type, i) = find_slot()) == -1) {
@@ -504,8 +504,8 @@ void Board_load_board(int board_type)
       return;
     }
     if ((len2 = msg_index[board_type][i].message_len) > 0) {
-      CREATE(tmp2, char, len2);
-      fread(tmp2, sizeof(char), len2, fl);
+      CREATE(tmp2, char, (unsigned long)len2);
+      fread(tmp2, sizeof(char), (unsigned long)len2, fl);
       msg_storage[MSG_SLOTNUM(board_type, i)] = tmp2;
     } else
       msg_storage[MSG_SLOTNUM(board_type, i)] = NULL;

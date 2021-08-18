@@ -227,7 +227,7 @@ void House_save_control(void)
     return;
   }
   /* write all the house control recs in one fell swoop.  Pretty nifty, eh? */
-  fwrite(house_control, sizeof(struct house_control_rec), num_of_houses, fl);
+  fwrite(house_control, sizeof(struct house_control_rec), (unsigned long)num_of_houses, fl);
 
   fclose(fl);
 }
@@ -360,7 +360,7 @@ void hcontrol_build_house(struct char_data *ch, char *arg)
     send_to_char(ch, "%s", HCONTROL_FORMAT);
     return;
   }
-  virt_house = atoi(arg1);
+  virt_house = (room_vnum)atoi(arg1);
   if ((real_house = real_room(virt_house)) == NOWHERE) {
     send_to_char(ch, "No such room exists.\r\n");
     return;
@@ -376,7 +376,7 @@ void hcontrol_build_house(struct char_data *ch, char *arg)
     send_to_char(ch, "%s", HCONTROL_FORMAT);
     return;
   }
-  if ((exit_num = search_block(arg1, dirs, FALSE)) < 0) {
+  if ((exit_num = (sh_int)search_block(arg1, dirs, FALSE)) < 0) {
     send_to_char(ch, "'%s' is not a valid direction.\r\n", arg1);
     return;
   }
@@ -434,7 +434,7 @@ void hcontrol_destroy_house(struct char_data *ch, char *arg)
     send_to_char(ch, "%s", HCONTROL_FORMAT);
     return;
   }
-  if ((i = find_house(atoi(arg))) == NOWHERE) {
+  if ((i = find_house((room_vnum)atoi(arg))) == NOWHERE) {
     send_to_char(ch, "Unknown house.\r\n");
     return;
   }
@@ -475,7 +475,7 @@ void hcontrol_pay_house(struct char_data *ch, char *arg)
 
   if (!*arg)
     send_to_char(ch, "%s", HCONTROL_FORMAT);
-  else if ((i = find_house(atoi(arg))) == NOWHERE)
+  else if ((i = find_house((room_vnum)atoi(arg))) == NOWHERE)
     send_to_char(ch, "Unknown house.\r\n");
   else {
     mudlog(NRM, MAX(LVL_IMMORT, GET_INVIS_LEV(ch)), TRUE, "Payment for house %s collected by %s.", arg, GET_NAME(ch));
@@ -523,7 +523,7 @@ ACMD(do_house)
     send_to_char(ch, "Only the primary owner can set guests.\r\n");
   else if (!*arg)
     House_list_guests(ch, i, FALSE);
-  else if ((id = get_id_by_name(arg)) < 0)
+  else if ((id = (int)get_id_by_name(arg)) < 0)
     send_to_char(ch, "No such player.\r\n");
   else if (id == GET_IDNUM(ch))
     send_to_char(ch, "It's your house!\r\n");

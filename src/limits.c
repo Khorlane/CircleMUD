@@ -230,7 +230,7 @@ void run_autowiz(void)
     char buf[256];
 
 #if defined(CIRCLE_UNIX)
-    res = snprintf(buf, sizeof(buf), "nice ../bin/autowiz %d %s %d %s %d &",
+    res = (size_t)snprintf(buf, sizeof(buf), "nice ../bin/autowiz %d %s %d %s %d &",
 	min_wizlist_lev, WIZLIST_FILE, LVL_IMMORT, IMMLIST_FILE, (int) getpid());
 #elif defined(CIRCLE_WINDOWS)
     res = snprintf(buf, sizeof(buf), "autowiz %d %s %d %s",
@@ -337,8 +337,8 @@ void gain_condition(struct char_data *ch, int condition, int value)
 
   GET_COND(ch, condition) += value;
 
-  GET_COND(ch, condition) = MAX(0, GET_COND(ch, condition));
-  GET_COND(ch, condition) = MIN(24, GET_COND(ch, condition));
+  GET_COND(ch, condition) = (sbyte)MAX(0, GET_COND(ch, condition));
+  GET_COND(ch, condition) = (sbyte)MIN(24, GET_COND(ch, condition));
 
   if (GET_COND(ch, condition) || PLR_FLAGGED(ch, PLR_WRITING))
     return;
@@ -416,9 +416,9 @@ void point_update(void)
     gain_condition(i, THIRST, -1);
 	
     if (GET_POS(i) >= POS_STUNNED) {
-      GET_HIT(i) = MIN(GET_HIT(i) + hit_gain(i), GET_MAX_HIT(i));
-      GET_MANA(i) = MIN(GET_MANA(i) + mana_gain(i), GET_MAX_MANA(i));
-      GET_MOVE(i) = MIN(GET_MOVE(i) + move_gain(i), GET_MAX_MOVE(i));
+      GET_HIT(i) = (sh_int)MIN(GET_HIT(i) + hit_gain(i), GET_MAX_HIT(i));
+      GET_MANA(i) = (sh_int)MIN(GET_MANA(i) + mana_gain(i), GET_MAX_MANA(i));
+      GET_MOVE(i) = (sh_int)MIN(GET_MOVE(i) + move_gain(i), GET_MAX_MOVE(i));
       if (AFF_FLAGGED(i, AFF_POISON))
 	if (damage(i, i, 2, SPELL_POISON) == -1)
 	  continue;	/* Oops, they died. -gg 6/24/98 */

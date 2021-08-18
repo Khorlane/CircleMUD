@@ -152,7 +152,7 @@ void string_add(struct descriptor_data *d, char *str)
     d->str = NULL;
 
     if (d->mail_to >= BOARD_MAGIC) {
-      Board_save_board(d->mail_to - BOARD_MAGIC);
+      Board_save_board((int)d->mail_to - BOARD_MAGIC);
       d->mail_to = 0;
     }
     if (STATE(d) == CON_EXDESC) {
@@ -250,7 +250,7 @@ ACMD(do_skillset)
    * find_skill_num() guarantees a valid spell_info[] index, or -1, and we
    * checked for the -1 above so we are safe here.
    */
-  SET_SKILL(vict, skill, value);
+  SET_SKILL(vict, skill, (byte)value);
   mudlog(BRF, LVL_IMMORT, TRUE, "%s changed %s's %s to %d.", GET_NAME(ch), GET_NAME(vict), spell_info[skill].name, value);
   send_to_char(ch, "You change %s's %s to %d.\r\n", GET_NAME(vict), spell_info[skill].name, value);
 }
@@ -349,7 +349,7 @@ void page_string(struct descriptor_data *d, char *str, int keep_internal)
     return;
 
   d->showstr_count = count_pages(str);
-  CREATE(d->showstr_vector, char *, d->showstr_count);
+  CREATE(d->showstr_vector, char *, (unsigned long)d->showstr_count);
 
   if (keep_internal) {
     d->showstr_head = strdup(str);
@@ -417,10 +417,10 @@ void show_string(struct descriptor_data *d, char *input)
   }
   /* Or if we have more to show.... */
   else {
-    diff = d->showstr_vector[d->showstr_page + 1] - d->showstr_vector[d->showstr_page];
+    diff = (int) d->showstr_vector[d->showstr_page + 1] - (int)d->showstr_vector[d->showstr_page];
     if (diff > MAX_STRING_LENGTH - 3) /* 3=\r\n\0 */
       diff = MAX_STRING_LENGTH - 3;
-    strncpy(buffer, d->showstr_vector[d->showstr_page], diff);	/* strncpy: OK (size truncated above) */
+    strncpy(buffer, d->showstr_vector[d->showstr_page], (unsigned long)diff);	/* strncpy: OK (size truncated above) */
     /*
      * Fix for prompt overwriting last line in compact mode submitted by
      * Peter Ajamian <peter@pajamian.dhs.org> on 04/21/2001

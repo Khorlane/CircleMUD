@@ -628,14 +628,14 @@ ACMD(do_cast)
     if (!tch || !skill_message(0, ch, tch, spellnum))
       send_to_char(ch, "You lost your concentration!\r\n");
     if (mana > 0)
-      GET_MANA(ch) = MAX(0, MIN(GET_MAX_MANA(ch), GET_MANA(ch) - (mana / 2)));
+      GET_MANA(ch) = (sh_int)MAX(0, MIN(GET_MAX_MANA(ch), GET_MANA(ch) - (mana / 2)));
     if (SINFO.violent && tch && IS_NPC(tch))
       hit(tch, ch, TYPE_UNDEFINED);
   } else { /* cast spell returns 1 on success; subtract mana & set waitstate */
     if (cast_spell(ch, tch, tobj, spellnum)) {
       WAIT_STATE(ch, PULSE_VIOLENCE);
       if (mana > 0)
-	GET_MANA(ch) = MAX(0, MIN(GET_MAX_MANA(ch), GET_MANA(ch) - mana));
+	GET_MANA(ch) = (sh_int)MAX(0, MIN(GET_MAX_MANA(ch), GET_MANA(ch) - mana));
     }
   }
 }
@@ -679,9 +679,9 @@ void spello(int spl, const char *name, int max_mana, int min_mana,
   spell_info[spl].mana_max = max_mana;
   spell_info[spl].mana_min = min_mana;
   spell_info[spl].mana_change = mana_change;
-  spell_info[spl].min_position = minpos;
+  spell_info[spl].min_position = (byte) minpos;
   spell_info[spl].targets = targets;
-  spell_info[spl].violent = violent;
+  spell_info[spl].violent = (byte) violent;
   spell_info[spl].routines = routines;
   spell_info[spl].name = name;
   spell_info[spl].wear_off_msg = wearoff;
