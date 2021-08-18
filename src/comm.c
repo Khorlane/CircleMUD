@@ -15,7 +15,7 @@
 
 #if CIRCLE_GNU_LIBC_MEMORY_TRACK
 # include <mcheck.h>
-#endif
+#endif 
 
 #ifdef CIRCLE_MACINTOSH		/* Includes for the Macintosh */
 # define SIGPIPE 13
@@ -71,81 +71,81 @@
 #endif
 
 /* externs */
-extern struct ban_list_element *ban_list;
-extern int num_invalid;
-extern char *GREETINGS;
-extern const char *circlemud_version;
-extern int circle_restrict;
-extern int mini_mud;
-extern int no_rent_check;
-extern FILE *player_fl;
-extern ush_int DFLT_PORT;
-extern const char *DFLT_DIR;
-extern const char *DFLT_IP;
-extern const char *LOGNAME;
-extern int max_playing;
-extern int nameserver_is_slow;	/* see config.c */
-extern int auto_save;		/* see config.c */
-extern int autosave_time;	/* see config.c */
-extern int *cmd_sort_info;
+extern struct                 ban_list_element *ban_list;
+extern int                    num_invalid;
+extern char                  *GREETINGS;
+extern const char            *circlemud_version;
+extern int                    circle_restrict;
+extern int                    mini_mud;
+extern int                    no_rent_check;
+extern FILE                  *player_fl;
+extern ush_int                DFLT_PORT;
+extern const char            *DFLT_DIR;
+extern const char            *DFLT_IP;
+extern const char            *LOGNAME;
+extern int                    max_playing;
+extern int                    nameserver_is_slow;	      /* see config.c */
+extern int                    auto_save;		            /* see config.c */
+extern int                    autosave_time;	          /* see config.c */
+extern int                   *cmd_sort_info;
 
-extern struct time_info_data time_info;		/* In db.c */
-extern char *help;
+extern struct time_info_data  time_info;                /* In db.c */
+extern char                  *help;
 
 /* local globals */
-struct descriptor_data *descriptor_list = NULL;		/* master desc list */
-struct txt_block *bufpool = 0;	/* pool of large output buffers */
-int buf_largecount = 0;		/* # of large buffers which exist */
-int buf_overflows = 0;		/* # of overflows of output */
-int buf_switches = 0;		/* # of switches from small to large buf */
-int circle_shutdown = 0;	/* clean shutdown */
-int circle_reboot = 0;		/* reboot the game after a shutdown */
-int no_specials = 0;		/* Suppress ass. of special routines */
-int max_players = 0;		/* max descriptors available */
-int tics = 0;			/* for extern checkpointing */
-int scheck = 0;			/* for syntax checking mode */
-struct timeval null_time;	/* zero-valued time structure */
-byte reread_wizlist;		/* signal: SIGUSR1 */
-byte emergency_unban;		/* signal: SIGUSR2 */
-FILE *logfile = NULL;		/* Where to send the log messages. */
-const char *text_overflow = "**OVERFLOW**\r\n";
+struct descriptor_data       *descriptor_list = NULL;		/* master desc list */
+struct txt_block             *bufpool         = 0;	    /* pool of large output buffers */
+int                           buf_largecount  = 0;		  /* # of large buffers which exist */
+int                           buf_overflows   = 0;		  /* # of overflows of output */
+int                           buf_switches    = 0;		  /* # of switches from small to large buf */
+int                           circle_shutdown = 0;	    /* clean shutdown */
+int                           circle_reboot   = 0;		  /* reboot the game after a shutdown */
+int                           no_specials     = 0;		  /* Suppress ass. of special routines */
+int                           max_players     = 0;		  /* max descriptors available */
+int                           tics            = 0;			/* for extern checkpointing */
+int                           scheck          = 0;			/* for syntax checking mode */
+struct timeval                null_time;	              /* zero-valued time structure */
+byte                          reread_wizlist;		        /* signal: SIGUSR1 */
+byte                          emergency_unban;		      /* signal: SIGUSR2 */
+FILE                         *logfile         = NULL;		/* Where to send the log messages. */
+const char                   *text_overflow   = "**OVERFLOW**\r\n";
 
 /* functions in this file */
-RETSIGTYPE reread_wizlists(int sig);
-RETSIGTYPE unrestrict_game(int sig);
-RETSIGTYPE reap(int sig);
-RETSIGTYPE checkpointing(int sig);
-RETSIGTYPE hupsig(int sig);
-ssize_t perform_socket_read(socket_t desc, char *read_point,size_t space_left);
-ssize_t perform_socket_write(socket_t desc, const char *txt,size_t length);
-void echo_off(struct descriptor_data *d);
-void echo_on(struct descriptor_data *d);
-void circle_sleep(struct timeval *timeout);
-int get_from_q(struct txt_q *queue, char *dest, int *aliased);
-void init_game(ush_int port);
-void signal_setup(void);
-void game_loop(socket_t mother_desc);
-socket_t init_socket(ush_int port);
-int new_descriptor(socket_t s);
-int get_max_players(void);
-int process_output(struct descriptor_data *t);
-int process_input(struct descriptor_data *t);
-void timediff(struct timeval *diff, struct timeval *a, struct timeval *b);
-void timeadd(struct timeval *sum, struct timeval *a, struct timeval *b);
-void flush_queues(struct descriptor_data *d);
-void nonblock(socket_t s);
-int perform_subst(struct descriptor_data *t, char *orig, char *subst);
-void record_usage(void);
-char *make_prompt(struct descriptor_data *point);
-void check_idle_passwords(void);
-void heartbeat(int pulse);
+RETSIGTYPE      reread_wizlists(int sig);
+RETSIGTYPE      unrestrict_game(int sig);
+RETSIGTYPE      reap(int sig);
+RETSIGTYPE      checkpointing(int sig);
+RETSIGTYPE      hupsig(int sig);
+ssize_t         perform_socket_read(socket_t desc, char *read_point,size_t space_left);
+ssize_t         perform_socket_write(socket_t desc, const char *txt,size_t length);
+void            echo_off(struct descriptor_data *d);
+void            echo_on(struct descriptor_data *d);
+void            circle_sleep(struct timeval *timeout);
+int             get_from_q(struct txt_q *queue, char *dest, int *aliased);
+void            init_game(ush_int port);
+void            signal_setup(void);
+void            game_loop(socket_t mother_desc);
+socket_t        init_socket(ush_int port);
+int             new_descriptor(socket_t s);
+int             get_max_players(void);
+int             process_output(struct descriptor_data *t);
+int             process_input(struct descriptor_data *t);
+void            timediff(struct timeval *diff, struct timeval *a, struct timeval *b);
+void            timeadd(struct timeval *sum, struct timeval *a, struct timeval *b);
+void            flush_queues(struct descriptor_data *d);
+void            nonblock(socket_t s);
+int             perform_subst(struct descriptor_data *t, char *orig, char *subst);
+void            record_usage(void);
+char           *make_prompt(struct descriptor_data *point);
+void            check_idle_passwords(void);
+void            heartbeat(int pulse);
 struct in_addr *get_bind_addr(void);
-int parse_ip(const char *addr, struct in_addr *inaddr);
-int set_sendbuf(socket_t s);
-void setup_log(const char *filename, int fd);
-int open_logfile(const char *filename, FILE *stderr_fp);
+int             parse_ip(const char *addr, struct in_addr *inaddr);
+int             set_sendbuf(socket_t s);
+void            setup_log(const char *filename, int fd);
+int             open_logfile(const char *filename, FILE *stderr_fp);
 #if defined(POSIX)
-sigfunc *my_signal(int signo, sigfunc *func);
+sigfunc        *my_signal(int signo, sigfunc *func);
 #endif
 
 /* extern fcnts */
@@ -155,9 +155,9 @@ void affect_update(void);	/* In magic.c */
 void mobile_activity(void);
 void perform_violence(void);
 void show_string(struct descriptor_data *d, char *input);
-int isbanned(char *hostname);
+int  isbanned(char *hostname);
 void weather_and_time(int mode);
-int perform_alias(struct descriptor_data *d, char *orig, size_t maxlen);
+int  perform_alias(struct descriptor_data *d, char *orig, size_t maxlen);
 void clear_free_list(void);
 void free_messages(void);
 void Board_clear_all(void);
@@ -319,7 +319,7 @@ int main(int argc, char **argv)
     boot_world();
   else {
     log("Running game on port %d.", port);
-    init_game(port);
+    init_game(port);          // Returns after game shuts down
   }
 
   log("Clearing game world.");
@@ -372,7 +372,7 @@ void init_game(ush_int port)
 
   log("Entering game loop.");
 
-  game_loop(mother_desc);
+  game_loop(mother_desc);     // Returns after game shuts down
 
   Crash_save_all();
 
@@ -588,18 +588,18 @@ int get_max_players(void)
  */
 void game_loop(socket_t mother_desc)
 {
-  fd_set input_set, output_set, exc_set, null_set;
-  struct timeval last_time, opt_time, process_time, temp_time;
-  struct timeval before_sleep, now, timeout;
-  char comm[MAX_INPUT_LENGTH];
+  fd_set                  input_set, output_set, exc_set, null_set;
+  struct timeval          last_time, opt_time, process_time, temp_time;
+  struct timeval          before_sleep, now, timeout;
+  char                    comm[MAX_INPUT_LENGTH];
   struct descriptor_data *d, *next_d;
-  int pulse = 0, missed_pulses, maxdesc, aliased;
+  int                     pulse = 0, missed_pulses, maxdesc, aliased;
 
   /* initialize various time values */
-  null_time.tv_sec = 0;
+  null_time.tv_sec  = 0;
   null_time.tv_usec = 0;
-  opt_time.tv_usec = OPT_USEC;
-  opt_time.tv_sec = 0;
+  opt_time.tv_usec  = OPT_USEC;
+  opt_time.tv_sec   = 0;
   FD_ZERO(&null_set);
 
   gettimeofday(&last_time, (struct timezone *) 0);
@@ -613,12 +613,12 @@ void game_loop(socket_t mother_desc)
       FD_ZERO(&input_set);
       FD_SET(mother_desc, &input_set);
       if (select(mother_desc + 1, &input_set, (fd_set *) 0, (fd_set *) 0, NULL) < 0) {
-	if (errno == EINTR)
-	  log("Waking up to process signal.");
-	else
-	  perror("SYSERR: Select coma");
+	      if (errno == EINTR)
+	        log("Waking up to process signal.");
+	      else
+	        perror("SYSERR: Select coma");
       } else
-	log("New connection.  Waking up.");
+	        log("New connection.  Waking up.");
       gettimeofday(&last_time, (struct timezone *) 0);
     }
     /* Set up the input, output, and exception sets for select(). */
@@ -655,9 +655,9 @@ void game_loop(socket_t mother_desc)
     if (process_time.tv_sec == 0 && process_time.tv_usec < OPT_USEC) {
       missed_pulses = 0;
     } else {
-      missed_pulses = (int)process_time.tv_sec * PASSES_PER_SEC;
-      missed_pulses += process_time.tv_usec / OPT_USEC;
-      process_time.tv_sec = 0;
+      missed_pulses        = (int)process_time.tv_sec * PASSES_PER_SEC;
+      missed_pulses       += process_time.tv_usec / OPT_USEC;
+      process_time.tv_sec  = 0;
       process_time.tv_usec = process_time.tv_usec % OPT_USEC;
     }
 
@@ -689,9 +689,9 @@ void game_loop(socket_t mother_desc)
     for (d = descriptor_list; d; d = next_d) {
       next_d = d->next;
       if (FD_ISSET(d->descriptor, &exc_set)) {
-	FD_CLR(d->descriptor, &input_set);
-	FD_CLR(d->descriptor, &output_set);
-	close_socket(d);
+	      FD_CLR(d->descriptor, &input_set);
+	      FD_CLR(d->descriptor, &output_set);
+	      close_socket(d);
       }
     }
 
@@ -699,8 +699,8 @@ void game_loop(socket_t mother_desc)
     for (d = descriptor_list; d; d = next_d) {
       next_d = d->next;
       if (FD_ISSET(d->descriptor, &input_set))
-	if (process_input(d) < 0)
-	  close_socket(d);
+	      if (process_input(d) < 0)
+	        close_socket(d);
     }
 
     /* Process commands we just read from process_input */
@@ -724,31 +724,31 @@ void game_loop(socket_t mother_desc)
         continue;
 
       if (d->character) {
-	/* Reset the idle timer & pull char back from void if necessary */
-	d->character->char_specials.timer = 0;
-	if (STATE(d) == CON_PLAYING && GET_WAS_IN(d->character) != NOWHERE) {
-	  if (IN_ROOM(d->character) != NOWHERE)
-	    char_from_room(d->character);
-	  char_to_room(d->character, GET_WAS_IN(d->character));
-	  GET_WAS_IN(d->character) = NOWHERE;
-	  act("$n has returned.", TRUE, d->character, 0, 0, TO_ROOM);
-	}
+	      /* Reset the idle timer & pull char back from void if necessary */
+	      d->character->char_specials.timer = 0;
+	      if (STATE(d) == CON_PLAYING && GET_WAS_IN(d->character) != NOWHERE) {
+	        if (IN_ROOM(d->character) != NOWHERE)
+	          char_from_room(d->character);
+	        char_to_room(d->character, GET_WAS_IN(d->character));
+	        GET_WAS_IN(d->character) = NOWHERE;
+	        act("$n has returned.", TRUE, d->character, 0, 0, TO_ROOM);
+	      }
         GET_WAIT_STATE(d->character) = 1;
       }
       d->has_prompt = FALSE;
 
-      if (d->str)		/* Writing boards, mail, etc. */
-	string_add(d, comm);
-      else if (d->showstr_count) /* Reading something w/ pager */
-	show_string(d, comm);
-      else if (STATE(d) != CON_PLAYING) /* In menus, etc. */
-	nanny(d, comm);
-      else {			/* else: we're playing normally. */
-	if (aliased)		/* To prevent recursive aliases. */
-	  d->has_prompt = TRUE;	/* To get newline before next cmd output. */
-	else if (perform_alias(d, comm, sizeof(comm)))    /* Run it through aliasing system */
-	  get_from_q(&d->input, comm, &aliased);
-	command_interpreter(d->character, comm); /* Send it to interpreter */
+      if (d->str)		                                      /* Writing boards, mail, etc. */
+	      string_add(d, comm);
+      else if (d->showstr_count)                          /* Reading something w/ pager */
+	      show_string(d, comm);
+      else if (STATE(d) != CON_PLAYING)                   /* In menus, etc. */
+	      nanny(d, comm);
+      else {			                                        /* else: we're playing normally. */
+	      if (aliased)		                                  /* To prevent recursive aliases. */
+	        d->has_prompt = TRUE;	                          /* To get newline before next cmd output. */
+	      else if (perform_alias(d, comm, sizeof(comm)))    /* Run it through aliasing system */
+	        get_from_q(&d->input, comm, &aliased);
+	      command_interpreter(d->character, comm);          /* Send it to interpreter */
       }
     }
 
@@ -756,10 +756,9 @@ void game_loop(socket_t mother_desc)
     for (d = descriptor_list; d; d = next_d) {
       next_d = d->next;
       if (*(d->output) && FD_ISSET(d->descriptor, &output_set)) {
-	/* Output for this player is ready. */
-
+	      /* Output for this player is ready. */
         process_output(d);
-        if (d->bufptr == 0)	/* All output sent. */
+        if (d->bufptr == 0)	                              /* All output sent. */
           d->has_prompt = TRUE;
       }
     }
@@ -767,8 +766,8 @@ void game_loop(socket_t mother_desc)
     /* Print prompts for other descriptors who had no other output */
     for (d = descriptor_list; d; d = d->next) {
       if (!d->has_prompt && d->bufptr == 0) {
-	write_to_descriptor(d->descriptor, make_prompt(d));
-	d->has_prompt = TRUE;
+	      write_to_descriptor(d->descriptor, make_prompt(d));
+	      d->has_prompt = TRUE;
       }
     }
 
@@ -776,7 +775,7 @@ void game_loop(socket_t mother_desc)
     for (d = descriptor_list; d; d = next_d) {
       next_d = d->next;
       if (STATE(d) == CON_CLOSE || STATE(d) == CON_DISCONNECT)
-	close_socket(d);
+	      close_socket(d);
     }
 
     /*
@@ -810,9 +809,9 @@ void game_loop(socket_t mother_desc)
     if (emergency_unban) {
       emergency_unban = FALSE;
       mudlog(BRF, LVL_IMMORT, TRUE, "Received SIGUSR2 - completely unrestricting game (emergent)");
-      ban_list = NULL;
+      ban_list        = NULL;
       circle_restrict = 0;
-      num_invalid = 0;
+      num_invalid     = 0;
     }
 
     /* Roll pulse over after 10 hours */
