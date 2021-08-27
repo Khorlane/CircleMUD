@@ -1850,8 +1850,6 @@ int process_input(struct descriptor_data *t)
   return (1);
 }
 
-
-
 /* perform substitution for the '^..^' csh-esque syntax orig is the
  * orig string, i.e. the one being modified.  subst contains the
  * substition string, i.e. "^telm^tell"

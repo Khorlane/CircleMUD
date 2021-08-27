@@ -12,7 +12,10 @@ readme.vs/
 src/*.o
 src/.accepted
 src/build_circlemud.com
+.ninja_deps
+.ninja_log
 auto*
+build.ninja
 ChangeLog
 Circle.sln
 Circle.vcxproj
