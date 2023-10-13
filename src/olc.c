@@ -14,6 +14,8 @@
  *  NOT DONE!!
  */
 
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+
 #include "conf.h"
 #include "sysdep.h"
 

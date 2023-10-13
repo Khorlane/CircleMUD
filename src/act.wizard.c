@@ -8,6 +8,8 @@
 *  CircleMUD is based on DikuMUD, Copyright (C) 1990, 1991.               *
 ************************************************************************ */
 
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+
 #include "conf.h"
 #include "sysdep.h"
 
