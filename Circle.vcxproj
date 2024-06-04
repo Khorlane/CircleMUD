@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x86">
+      <Configuration>Debug</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x86">
+      <Configuration>Release</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4360e24b-add9-4a3e-b991-aae78ef64830}</ProjectGuid>
+    <Keyword>Linux</Keyword>
+    <RootNamespace>Circle</RootNamespace>
+    <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
+    <ApplicationType>Linux</ApplicationType>
+    <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
+    <TargetLinuxPlatform>Generic</TargetLinuxPlatform>
+    <LinuxProjectType>{D51BCBC9-82E9-4017-911E-C93873C4EA2B}</LinuxProjectType>
+    <ProjectName>Circle</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>WSL_Clang_1_0</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <EnableIncrementalBuild>WithNinja</EnableIncrementalBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClCompile Include="src\act.comm.c" />
+    <ClCompile Include="src\act.informative.c" />
+    <ClCompile Include="src\act.item.c" />
+    <ClCompile Include="src\act.movement.c" />
+    <ClCompile Include="src\act.offensive.c" />
+    <ClCompile Include="src\act.other.c" />
+    <ClCompile Include="src\act.social.c" />
+    <ClCompile Include="src\act.wizard.c" />
+    <ClCompile Include="src\alias.c" />
+    <ClCompile Include="src\ban.c" />
+    <ClCompile Include="src\boards.c" />
+    <ClCompile Include="src\bsd-snprintf.c" />
+    <ClCompile Include="src\castle.c" />
+    <ClCompile Include="src\class.c" />
+    <ClCompile Include="src\comm.c" />
+    <ClCompile Include="src\config.c" />
+    <ClCompile Include="src\constants.c" />
+    <ClCompile Include="src\db.c" />
+    <ClCompile Include="src\fight.c" />
+    <ClCompile Include="src\graph.c" />
+    <ClCompile Include="src\handler.c" />
+    <ClCompile Include="src\house.c" />
+    <ClCompile Include="src\interpreter.c" />
+    <ClCompile Include="src\limits.c" />
+    <ClCompile Include="src\magic.c" />
+    <ClCompile Include="src\mail.c" />
+    <ClCompile Include="src\mobact.c" />
+    <ClCompile Include="src\modify.c" />
+    <ClCompile Include="src\objsave.c" />
+    <ClCompile Include="src\olc.c" />
+    <ClCompile Include="src\random.c" />
+    <ClCompile Include="src\shop.c" />
+    <ClCompile Include="src\spec_assign.c" />
+    <ClCompile Include="src\spec_procs.c" />
+    <ClCompile Include="src\spells.c" />
+    <ClCompile Include="src\spell_parser.c" />
+    <ClCompile Include="src\utils.c" />
+    <ClCompile Include="src\weather.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\boards.h" />
+    <ClInclude Include="src\bsd-snprintf.h" />
+    <ClInclude Include="src\comm.h" />
+    <ClInclude Include="src\conf.h" />
+    <ClInclude Include="src\constants.h" />
+    <ClInclude Include="src\db.h" />
+    <ClInclude Include="src\handler.h" />
+    <ClInclude Include="src\house.h" />
+    <ClInclude Include="src\interpreter.h" />
+    <ClInclude Include="src\mail.h" />
+    <ClInclude Include="src\olc.h" />
+    <ClInclude Include="src\screen.h" />
+    <ClInclude Include="src\shop.h" />
+    <ClInclude Include="src\spells.h" />
+    <ClInclude Include="src\structs.h" />
+    <ClInclude Include="src\sysdep.h" />
+    <ClInclude Include="src\telnet.h" />
+    <ClInclude Include="src\utils.h" />
+  </ItemGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile />
+    <ClCompile />
+    <ClCompile>
+      <AdditionalOptions>-W"no-pointer-bool-conversion"
+ %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>
