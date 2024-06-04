@@ -5,3 +5,5 @@ My copy of [CircleMUD](www.circlemud.org) version 3.1 with slight modifications 
 If you are interested in exploring the CircleMUD codebase on Linux via a powerful IDE, this combination of tools makes that task very easy.
 
 Where is `main()`? Look in `comm.c`, line 206.
+
+This repo contains only the files required to compile and play around with CircleMUD in the above defined environment. The complete CircleMUD 3.1 is here: `https://www.circlemud.org/pub/CircleMUD/3.x/circle-3.1.zip`.
