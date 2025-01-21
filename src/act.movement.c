@@ -152,7 +152,7 @@ int do_simple_move(struct char_data *ch, int dir, int need_specials_check)
 
   /* Now we know we're allow to go into the room. */
   if (GET_LEVEL(ch) < LVL_IMMORT && !IS_NPC(ch))
-    GET_MOVE(ch) -= need_movement;
+    GET_MOVE(ch) -= (sh_int)need_movement;
 
   if (!AFF_FLAGGED(ch, AFF_SNEAK)) {
     char buf2[MAX_STRING_LENGTH];

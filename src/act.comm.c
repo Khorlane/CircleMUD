@@ -448,7 +448,7 @@ ACMD(do_gen_comm)
       send_to_char(ch, "You're too exhausted to holler.\r\n");
       return;
     } else
-      GET_MOVE(ch) -= holler_move_cost;
+      GET_MOVE(ch) -= (sh_int)holler_move_cost;
   }
   /* set up the color on code */
   strlcpy(color_on, com_msgs[subcmd][3], sizeof(color_on));

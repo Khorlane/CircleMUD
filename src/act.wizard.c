@@ -400,7 +400,7 @@ void do_stat_room(struct char_data *ch)
     if (!CAN_SEE(ch, k))
       continue;
 
-    column += send_to_char(ch, "%s %s(%s)", found++ ? "," : "", GET_NAME(k),
+    column += (int)send_to_char(ch, "%s %s(%s)", found++ ? "," : "", GET_NAME(k),
 		!IS_NPC(k) ? "PC" : (!IS_MOB(k) ? "NPC" : "MOB"));
     if (column >= 62) {
       send_to_char(ch, "%s\r\n", k->next_in_room ? "," : "");
@@ -418,7 +418,7 @@ void do_stat_room(struct char_data *ch)
       if (!CAN_SEE_OBJ(ch, j))
 	continue;
 
-      column += send_to_char(ch, "%s %s", found++ ? "," : "", j->short_description);
+      column += (int)send_to_char(ch, "%s %s", found++ ? "," : "", j->short_description);
       if (column >= 62) {
 	send_to_char(ch, "%s\r\n", j->next_content ? "," : "");
 	found = FALSE;
@@ -570,7 +570,7 @@ void do_stat_object(struct char_data *ch, struct obj_data *j)
     column = 9;	/* ^^^ strlen ^^^ */
 
     for (found = 0, j2 = j->contains; j2; j2 = j2->next_content) {
-      column += send_to_char(ch, "%s %s", found++ ? "," : "", j2->short_description);
+      column += (int)send_to_char(ch, "%s %s", found++ ? "," : "", j2->short_description);
       if (column >= 62) {
 	send_to_char(ch, "%s\r\n", j2->next_content ? "," : "");
 	found = FALSE;
@@ -704,7 +704,7 @@ void do_stat_character(struct char_data *ch, struct char_data *k)
     send_to_char(ch, " <none>\r\n");
   else {
     for (fol = k->followers; fol; fol = fol->next) {
-      column += send_to_char(ch, "%s %s", found++ ? "," : "", PERS(fol->follower, ch));
+      column += (int)send_to_char(ch, "%s %s", found++ ? "," : "", PERS(fol->follower, ch));
       if (column >= 62) {
         send_to_char(ch, "%s\r\n", fol->next ? "," : "");
         found = FALSE;
@@ -1541,8 +1541,8 @@ ACMD(do_date)
   else {
     mytime = time(0) - boot_time;
     d = (int)mytime / 86400;
-    h = (mytime / 3600) % 24;
-    m = (mytime / 60) % 60;
+    h = (int)((mytime / 3600) % 24);
+    m = (int)((mytime / 60) % 60);
 
     send_to_char(ch, "Up since %s: %d day%s, %d:%02d\r\n", tmstr, d, d == 1 ? "" : "s", h, m);
   }
@@ -1942,11 +1942,11 @@ ACMD(do_show)
 	return;
       }
     } else
-      for (len = zrn = 0; zrn <= top_of_zone_table; zrn++) {
-	nlen = (int)print_zone_to_buf(buf + len, sizeof(buf) - len, zrn);
-        if (len + (unsigned long)nlen >= sizeof(buf) || nlen < 0)
+      for (len = 0, zrn = 0; zrn <= top_of_zone_table; zrn++) {
+              nlen = (int)print_zone_to_buf(buf + len, sizeof(buf) - len, zrn);
+        if (len + (size_t)nlen >= sizeof(buf) || nlen < 0)
           break;
-        len += (unsigned long)nlen;
+        len += (size_t)nlen;
       }
     page_string(ch->desc, buf, TRUE);
     break;
