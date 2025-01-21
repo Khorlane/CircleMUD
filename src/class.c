@@ -1414,7 +1414,7 @@ void roll_real_abils(struct char_data *ch)
     for (k = 0; k < 6; k++)
       if (table[k] < temp) {
 	temp ^= table[k];
-	table[k] ^= temp;
+    table[k] = (ubyte)temp;
 	temp ^= table[k];
       }
   }
@@ -1551,11 +1551,11 @@ void advance_level(struct char_data *ch)
     break;
   }
 
-  ch->points.max_hit += MAX(1, add_hp);
-  ch->points.max_move += MAX(1, add_move);
+  ch->points.max_hit += (sh_int)MAX(1, add_hp);
+  ch->points.max_move += (sh_int)MAX(1, add_move);
 
   if (GET_LEVEL(ch) > 1)
-    ch->points.max_mana += add_mana;
+    ch->points.max_mana += (sh_int) add_mana;
 
   if (IS_MAGIC_USER(ch) || IS_CLERIC(ch))
     GET_PRACTICES(ch) += MAX(2, wis_app[GET_WIS(ch)].bonus);
