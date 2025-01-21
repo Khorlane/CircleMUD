@@ -335,7 +335,7 @@ void gain_condition(struct char_data *ch, int condition, int value)
 
   intoxicated = (GET_COND(ch, DRUNK) > 0);
 
-  GET_COND(ch, condition) += value;
+  GET_COND(ch, condition) += (sbyte)value;
 
   GET_COND(ch, condition) = (sbyte)MAX(0, GET_COND(ch, condition));
   GET_COND(ch, condition) = (sbyte)MIN(24, GET_COND(ch, condition));
