@@ -7,3 +7,7 @@ If you are interested in exploring the CircleMUD codebase on Linux via a powerfu
 Where is `main()`? Look in `comm.c`, line 206.
 
 This repo contains only the files required to compile and play around with CircleMUD in the above defined environment. The complete CircleMUD 3.1 is here: `https://www.circlemud.org/pub/CircleMUD/3.x/circle-3.1.zip`.
+
+Here's a link that provides instructions to configure Visual Studio to target WSL
+
+https://learn.microsoft.com/en-us/cpp/build/walkthrough-build-debug-wsl2?view=msvc-170#wsl-2-and-msbuild-based-linux-projects
