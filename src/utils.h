@@ -8,6 +8,7 @@
 *  CircleMUD is based on DikuMUD, Copyright (C) 1990, 1991.               *
 ************************************************************************ */
 
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 
 /* external declarations and prototypes **********************************/
 
