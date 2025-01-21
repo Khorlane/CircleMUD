@@ -137,11 +137,11 @@ void affect_modify(struct char_data *ch, byte loc, sbyte mod,
     break;
 
   case APPLY_CHAR_WEIGHT:
-    GET_WEIGHT(ch) += mod;
+    GET_WEIGHT(ch) += (ubyte)mod;
     break;
 
   case APPLY_CHAR_HEIGHT:
-    GET_HEIGHT(ch) += mod;
+    GET_HEIGHT(ch) += (ubyte)mod;
     break;
 
   case APPLY_MANA:
@@ -530,7 +530,7 @@ void equip_char(struct char_data *ch, struct obj_data *obj, int pos)
   obj->worn_on = (sh_int)pos;
 
   if (GET_OBJ_TYPE(obj) == ITEM_ARMOR)
-    GET_AC(ch) -= apply_ac(ch, pos);
+    GET_AC(ch) -= (sh_int)apply_ac(ch, pos);
 
   if (IN_ROOM(ch) != NOWHERE) {
     if (pos == WEAR_LIGHT && GET_OBJ_TYPE(obj) == ITEM_LIGHT)
@@ -564,7 +564,7 @@ struct obj_data *unequip_char(struct char_data *ch, int pos)
   obj->worn_on = -1;
 
   if (GET_OBJ_TYPE(obj) == ITEM_ARMOR)
-    GET_AC(ch) += apply_ac(ch, pos);
+    GET_AC(ch) += (sh_int)apply_ac(ch, pos);
 
   if (IN_ROOM(ch) != NOWHERE) {
     if (pos == WEAR_LIGHT && GET_OBJ_TYPE(obj) == ITEM_LIGHT)
