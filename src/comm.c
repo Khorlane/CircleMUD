@@ -656,7 +656,7 @@ void game_loop(socket_t mother_desc)
       missed_pulses = 0;
     } else {
       missed_pulses        = (int)process_time.tv_sec * PASSES_PER_SEC;
-      missed_pulses       += process_time.tv_usec / OPT_USEC;
+      missed_pulses       += (int)(process_time.tv_usec / OPT_USEC);
       process_time.tv_sec  = 0;
       process_time.tv_usec = process_time.tv_usec % OPT_USEC;
     }
@@ -1463,8 +1463,8 @@ int process_output(struct descriptor_data *t)
       size_t savetextlen = strlen(osb + result);
 
       strcat(t->output, osb + result);
-      t->bufptr   -= savetextlen;
-      t->bufspace += savetextlen;
+      t->bufptr   -= (int)savetextlen;
+      t->bufspace += (int)savetextlen;
     }
 
   } else {
