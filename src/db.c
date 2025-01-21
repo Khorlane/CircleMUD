@@ -10,6 +10,8 @@
 
 #define __DB_C__
 
+#pragma GCC diagnostic ignored "-Wconversion"
+
 #include "conf.h"
 #include "sysdep.h"
 
