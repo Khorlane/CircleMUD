@@ -735,7 +735,7 @@ int damage(struct char_data *ch, struct char_data *victim, int dam, int attackty
 
   /* Set the maximum damage per round and subtract the hit points */
   dam = MAX(MIN(dam, 100), 0);
-  GET_HIT(victim) -= dam;
+  GET_HIT(victim) = (sh_int)MAX(GET_HIT(victim) - dam, SHRT_MIN);
 
   /* Gain exp for the hit */
   if (ch != victim)
