@@ -2322,7 +2322,7 @@ void char_to_store(struct char_data *ch, struct char_file_u *st)
 
   st->birth = ch->player.time.birth;
   st->played = ch->player.time.played;
-  st->played += time(0) - ch->player.time.logon;
+  st->played += (int)(time(0) - ch->player.time.logon);
   st->last_logon = time(0);
 
   ch->player.time.played = st->played;
@@ -2800,7 +2800,7 @@ room_rnum real_room(room_vnum vnum)
 
   /* perform binary search on world-table */
   for (;;) {
-    mid = (bot + top) / 2;
+    mid = (short int)((bot + top) / 2);
 
     if ((world + mid)->number == vnum)
       return (mid);
@@ -2825,7 +2825,7 @@ mob_rnum real_mobile(mob_vnum vnum)
 
   /* perform binary search on mob-table */
   for (;;) {
-    mid = (bot + top) / 2;
+    mid = (short int)((bot + top) / 2);
 
     if ((mob_index + mid)->vnum == vnum)
       return (mid);
@@ -2849,7 +2849,7 @@ obj_rnum real_object(obj_vnum vnum)
 
   /* perform binary search on obj-table */
   for (;;) {
-    mid = (bot + top) / 2;
+    mid = (short int)((bot + top) / 2);
 
     if ((obj_index + mid)->vnum == vnum)
       return (mid);
@@ -2873,7 +2873,7 @@ room_rnum real_zone(room_vnum vnum)
 
   /* perform binary search on zone-table */
   for (;;) {
-    mid = (bot + top) / 2;
+    mid = (short int)((bot + top) / 2);
 
     if ((zone_table + mid)->number == vnum)
       return (mid);
