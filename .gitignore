@@ -17,6 +17,7 @@ configure
 FAQ
 macrun.pl
 README
+!README.md
 release_notes.3.1.txt
 syslog.CRASH
 vms_autorun.com
