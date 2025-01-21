@@ -352,7 +352,7 @@ void store_mail(long to, long from, char *message_pointer)
   strncpy(data.txt, msg_txt, DATA_BLOCK_DATASIZE);	/* strncpy: OK (d.txt:DATA_BLOCK_DATASIZE+1) */
   data.txt[DATA_BLOCK_DATASIZE] = '\0';
   write_to_file(&data, BLOCK_SIZE, target_address);
-  bytes_written += strlen(data.txt);
+  bytes_written += (int)strlen(data.txt);
   msg_txt += strlen(data.txt);
 
   /*
@@ -381,7 +381,7 @@ void store_mail(long to, long from, char *message_pointer)
     data.txt[DATA_BLOCK_DATASIZE] = '\0';
     write_to_file(&data, BLOCK_SIZE, target_address);
 
-    bytes_written += strlen(data.txt);
+    bytes_written += (int)strlen(data.txt);
     msg_txt += strlen(data.txt);
   }
 }				/* store mail */
