@@ -268,7 +268,8 @@ ASPELL(spell_identify)
     switch (GET_OBJ_TYPE(obj)) {
     case ITEM_SCROLL:
     case ITEM_POTION:
-      len = i = 0;
+      len = 0;
+      i = 0;
 
       if (GET_OBJ_VAL(obj, 1) >= 1) {
 	i = snprintf(bitbuf + len, sizeof(bitbuf) - len, " %s", skill_name(GET_OBJ_VAL(obj, 1)));
